@@ -1,0 +1,79 @@
+# This workflow will install Python dependencies, lint and run tests with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  lint_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Setup Python3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+
+      - name: Setup Poetry
+        uses: Gr1N/setup-poetry@v7
+
+      - name: Install dependencies
+        run: |
+          poetry install
+
+      - name: Lint with pre-commit trailing-whitespace hook
+        run: |
+          poetry run pre-commit run trailing-whitespace --all-files
+
+      - name: Lint with pre-commit end-of-file-fixer hook
+        run: |
+          poetry run pre-commit run end-of-file-fixer --all-files
+
+      - name: Lint with pre-commit name-tests-test hook
+        run: |
+          poetry run pre-commit run name-tests-test --all-files
+
+      - name: Lint with pre-commit check-json hook
+        run: |
+          poetry run pre-commit run check-json --all-files
+
+      - name: Lint with pre-commit check-yaml hook
+        run: |
+          poetry run pre-commit run check-yaml --all-files
+
+      - name: Lint with pre-commit check-toml hook
+        run: |
+          poetry run pre-commit run check-toml --all-files
+
+      - name: Lint with mypy
+        run: poetry run mypy . --strict
+
+      - name: Lint with flake8
+        run: |
+          poetry run flake8
+
+      - name: Lint with black
+        run: |
+          poetry run black . --check ; poetry run black . --diff
+
+      - name: Lint with isort
+        run: |
+          poetry run isort . --diff
+
+      - name: Lint with vulture
+        run: |
+          poetry run vulture
+
+      - name: Test with pytest
+        run: |
+          poetry run pytest -v -ra
