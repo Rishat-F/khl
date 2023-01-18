@@ -76,4 +76,8 @@ jobs:
 
       - name: Test with pytest
         run: |
-          poetry run pytest -v -ra
+          poetry run coverage run -m pytest -v -ra
+
+      - name: Show coverage report
+        run: |
+          poetry run coverage report -m
