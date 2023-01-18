@@ -575,9 +575,22 @@ def fix_org_loc(text: str) -> str:
     return re.sub(pattern, "org", text)
 
 
-def before_lemmatizing(text: str) -> str:
+def before_lemmatizing(
+    text: str,
+    replace_ners_: bool = False,
+    replace_dates_: bool = False,
+    replace_penalties_: bool = False,
+) -> str:
     """
     Обработка текста перед лемматизацией.
+
+    Пример использования:
+      before_lemmatizing(
+        text="1 января 2020 года Иван Иванов в Москве забил гол в ворота Спартака, а также заработал 5+10 за грубость",  # noqa
+        replace_ners_=True,
+        replace_dates_=True,
+        replace_penalties=True,
+      ) -> "date per в loc забил гол в ворота org а также заработал pen за грубость"
 
     Последовательность действий:
       1. Удаляем все что в скобках
@@ -602,9 +615,9 @@ def before_lemmatizing(text: str) -> str:
       20. Удаляем годы рождения
       21. Корректирум 'Иванов-Петров-Сидоров' -> 'Иванов - Петров - Сидоров'
       22. Корректируем ' -Иванов' -> ' - Иванов', 'Иванов- ' -> 'Иванов - '
-      23. Заменяем ner'ы
-      24. Заменяем даты
-      25. Заменяем удаления
+      23. Заменяем ner'ы (если необходимо)
+      24. Заменяем даты (если необходимо)
+      25. Заменяем удаления (если необходимо)
       26. Удаляем пометки годов
       27. Костыльная замена названий чего-то в кавычках на org
       28. Замена прописанных названий лиг и команд на org
@@ -649,12 +662,16 @@ def before_lemmatizing(text: str) -> str:
     text = delete_birth_mark(text)
     text = fix_surname_dash_surname_dash_surname(text)
     text = fix_dash_word(text)
-    text = replace_ners(text)
-    text = replace_dates(text)
-    text = replace_penalty(text)
+    if replace_ners_:
+        text = replace_ners(text)
+    if replace_dates_:
+        text = replace_dates(text)
+    if replace_penalties_:
+        text = replace_penalty(text)
     text = delete_year_city_mark(text)
-    text = handwritten_replace_orgs(text)
-    text = replace_concrete_orgs(text)
+    if replace_ners_:
+        text = handwritten_replace_orgs(text)
+        text = replace_concrete_orgs(text)
     text = split_ners(text)
     text = delete_urls(text)
     text = delete_quotes_with_one_symbol(text)
@@ -672,4 +689,4 @@ def before_lemmatizing(text: str) -> str:
     text = delete_beginning_ending_dashes_in_words(text)
     text = fix_dots(text)
     text = fix_question_marks(text)
-    return text
+    return text.strip()

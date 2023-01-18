@@ -1215,7 +1215,7 @@ def test_replace_concrete_orgs(source_text, expected_text):
 
 
 @pytest.mark.parametrize(
-    "source_text,expected_text",
+    "source_text,expected_text,replace_ners_,replace_dates_,replace_penalties_",
     [
         (
             "Дмитрий Квартальнов: 'Будет очень жёсткая серия'. Главный тренер "
@@ -1232,8 +1232,47 @@ def test_replace_concrete_orgs(source_text, expected_text):
             "В овертайме забили. - Как вам качество игры команды сегодня? - Хорошее. "
             "- Пропущенная в третьем периоде шайба была лишней или всё-таки команда "
             "мало забила в основное время? - Когда счёт такой конечно мало забиваем.",
+            True,
+            True,
+            True,
+        ),
+        (
+            "1 января 2020 года Вадим Шипачев забил 1000-й гол и стал лучшим снайпером "
+            "'Динамо Мск' (в новейшей истории). Это случилось в Казани в матче против "
+            "Ак Барса, после того как на 25:15 Данис Зарипов получил 4+10 за грубость.",
+            "января года Вадим Шипачев забил гол и стал лучшим снайпером "
+            "Динамо Мск. Это случилось в Казани в матче против "
+            "Ак Барса после того как на Данис Зарипов получил за грубость.",
+            False,
+            False,
+            False,
+        ),
+        (
+            "1 января 2020 года Вадим Шипачев забил 1000-й гол и стал лучшим снайпером "
+            "'Динамо Мск' (в новейшей истории). Это случилось в Казани в матче против "
+            "Ак Барса, после того как на 25:15 Данис Зарипов получил 4+10 за грубость.",
+            "date per забил гол и стал лучшим снайпером "
+            "org. Это случилось в loc в матче против "
+            "org после того как на per получил pen за грубость.",
+            True,
+            True,
+            True,
         ),
     ],
 )
-def test_before_lemmatizing(source_text, expected_text):
-    assert before_lemmatizing(source_text) == expected_text
+def test_before_lemmatizing(
+    source_text,
+    expected_text,
+    replace_ners_,
+    replace_dates_,
+    replace_penalties_,
+):
+    assert (
+        before_lemmatizing(
+            source_text,
+            replace_ners_,
+            replace_dates_,
+            replace_penalties_,
+        )
+        == expected_text
+    )
