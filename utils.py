@@ -9,6 +9,7 @@
 
 
 import re
+from typing import List
 
 from natasha import (
     DatesExtractor,
@@ -58,12 +59,12 @@ def unify_text(text: str) -> str:
     return text.strip()
 
 
-def _find_ners(text: str) -> list[Span]:
+def _find_ners(text: str) -> List[Span]:
     """Нахождение именованных сущностей."""
     doc = Doc(text)
     doc.segment(segmenter)
     doc.tag_ner(ner_tagger)
-    ners: list[Span] = doc.ner.spans
+    ners: List[Span] = doc.ner.spans
     return ners
 
 
@@ -81,7 +82,7 @@ def replace_ners(text: str) -> str:
     return text
 
 
-def _find_dates(text: str) -> list[NatashaMatch]:
+def _find_dates(text: str) -> List[NatashaMatch]:
     dates_extractor = DatesExtractor(morph_vocab)
     return [match_ for match_ in dates_extractor(text)]
 
