@@ -34,13 +34,6 @@ morph_tagger = NewsMorphTagger(emb)
 
 def unify_text(text: str) -> str:
     """Приведение текстов новостей к единому виду."""
-    alphabet = (
-        "абвгдеёзжийклмнопрстуфхцчшщьыъэюя"
-        "АБВГДЕЁЗЖИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ"
-        "\"',.[]{}()/=+-%№#@!?`;:0123456789"
-        "abcdefghijklmnopqrstuvwxyz"
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ "
-    )
     for symbol in ['"', "`", "«", "»", "„", "“", "”"]:
         text = text.replace(symbol, "'")
     for symbol in ["—", "–", "−"]:
@@ -53,10 +46,8 @@ def unify_text(text: str) -> str:
         .replace("ё", "ё")
         .replace("…", "...")
     )
-    legal_symbols = [sym if sym in alphabet else " " for sym in text]
-    text = "".join(legal_symbols)
-    text = re.sub(" {2,}", " ", text)
-    return text.strip()
+    text = re.sub(r"[^ А-Яа-яЁёA-Za-z0-9',.\[\]{}()/=+%№#@!?;:-]", " ", text)
+    return merge_spaces(text).strip()
 
 
 def _find_ners(text: str) -> List[Span]:

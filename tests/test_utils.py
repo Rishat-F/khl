@@ -61,12 +61,24 @@ from utils import (
         (" \t\r\n Текст\t \n\r", "Текст"),
         (
             "﻿​­ \tДанный \u200bтекст\xa0содержит \xadмного "
-            "\ufeffплохих символов.\n\tWe need to  delete them. "
+            "\ufeffплохих   символов.\n\tWe need to  delete them. "
             "\r—«»–−…⅛¼½„“”\\\"`йё - and \adon't forget \tfix "
             'those \ftoo! But leave "/".',
             "Данный текст содержит много плохих символов. "
             "We need to delete them. -''--...1/81/41/2''' ''йё - and "
             "don't forget fix those too! But leave '/'.",
+        ),
+        (
+            "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
+            "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz"
+            "',.[]{}()/=+-%№#@!?;:0123456789",
+            "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
+            "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz"
+            "',.[]{}()/=+-%№#@!?;:0123456789",
         ),
     ],
 )
