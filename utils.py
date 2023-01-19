@@ -16,7 +16,6 @@ from natasha import (
     Doc,
     MorphVocab,
     NewsEmbedding,
-    NewsMorphTagger,
     NewsNERTagger,
     Segmenter,
 )
@@ -26,10 +25,9 @@ from natasha.span import Span
 from teams_orgs import teams_orgs_pattern
 
 segmenter = Segmenter()
-morph_vocab = MorphVocab()
-emb = NewsEmbedding()
+morph_vocab = MorphVocab()  # pragma: no mutate
+emb = NewsEmbedding()  # pragma: no mutate
 ner_tagger = NewsNERTagger(emb)
-morph_tagger = NewsMorphTagger(emb)
 
 
 def unify_text(text: str) -> str:
@@ -569,9 +567,9 @@ def fix_org_loc(text: str) -> str:
 
 def before_lemmatizing(
     text: str,
-    replace_ners_: bool = False,
-    replace_dates_: bool = False,
-    replace_penalties_: bool = False,
+    replace_ners_: bool,
+    replace_dates_: bool,
+    replace_penalties_: bool,
 ) -> str:
     """
     Обработка текста перед лемматизацией.

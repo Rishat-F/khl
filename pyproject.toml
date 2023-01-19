@@ -18,6 +18,7 @@ vulture = "^2.7"
 pre-commit-hooks = "^4.4.0"
 mypy = "^0.991"
 coverage = "^7.0.5"
+mutmut = "^2.4.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -42,3 +43,11 @@ ignore_missing_imports = true
 
 [tool.coverage.run]
 omit = ["tests/*"]
+
+[tool.mutmut]
+paths_to_mutate=[
+    "teams_orgs.py",
+    "utils.py",
+]
+runner="python -m pytest"
+tests_dir="tests/"

@@ -128,6 +128,7 @@ def test_replace_ners(source_text, expected_text):
 @pytest.mark.parametrize(
     "source_text,expected_text",
     [
+        ("1 января 2020 года и 21 января 2020 года", "date и date"),
         ("1 января 2020 года", "date"),
         (
             "Открытая тренировка 'Ак Барса' пройдет 1 января 2020г.",
