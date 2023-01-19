@@ -4,7 +4,6 @@
 import pytest
 
 from utils import (
-    before_lemmatizing,
     delete_age_category,
     delete_amplua,
     delete_beginning_ending_dashes_in_words,
@@ -49,6 +48,7 @@ from utils import (
     replace_tak_kak,
     replace_to_est,
     replace_vs_with_dash,
+    simplify_text,
     split_ners,
     unify_text,
 )
@@ -1273,7 +1273,7 @@ def test_replace_concrete_orgs(source_text, expected_text):
         ),
     ],
 )
-def test_before_lemmatizing(
+def test_simplify_text(
     source_text,
     expected_text,
     replace_ners_,
@@ -1281,7 +1281,7 @@ def test_before_lemmatizing(
     replace_penalties_,
 ):
     assert (
-        before_lemmatizing(
+        simplify_text(
             source_text,
             replace_ners_,
             replace_dates_,

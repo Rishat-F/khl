@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "khl"
 version = "0.1.0"
-description = "Preprocess russian hockey news for further machine learning."
+description = "Preparing russian hockey news for machine learning"
 authors = ["Rishat Fayzullin <nilluziaf@gmail.com>"]
 
 [tool.poetry.dependencies]
