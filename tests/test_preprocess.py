@@ -190,6 +190,30 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
     "source_text,replace_ners_,replace_dates_,replace_penalties_,exclude_stop_words,expected_lemmas",
     [
         (
+            "- Как сыграли? - 2:2.",
+            False,
+            False,
+            False,
+            True,
+            ["-", "как", "сыграть", "?"],
+        ),
+        (
+            "- Играете в футбол? - Иногда.",
+            False,
+            False,
+            False,
+            True,
+            ["-", "играть", "футбол", "?", "-", "."],
+        ),
+        (
+            "- Сколько выходных дадите команде? - 2.",
+            False,
+            False,
+            False,
+            False,
+            ["-", "сколько", "выходной", "дать", "команда", "?"],
+        ),
+        (
             "Сегодня Ансель Галимов забил несколько голов",
             False,
             False,

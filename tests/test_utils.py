@@ -1271,6 +1271,27 @@ def test_replace_concrete_orgs(source_text, expected_text):
             True,
             True,
         ),
+        (
+            "- Как сыграли? 2:2.",
+            "- Как сыграли?",
+            False,
+            False,
+            False,
+        ),
+        (
+            "- Как сыграли? - 2:2.",
+            "- Как сыграли?",
+            False,
+            False,
+            False,
+        ),
+        (
+            "- Сколько выходных дадите команде? - 2.",
+            "- Сколько выходных дадите команде?",
+            False,
+            False,
+            False,
+        ),
     ],
 )
 def test_simplify_text(
