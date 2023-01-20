@@ -48,6 +48,7 @@ omit = ["tests/*"]
 paths_to_mutate=[
     "teams_orgs.py",
     "utils.py",
+    "preprocess.py",
 ]
 runner="python -m pytest"
 tests_dir="tests/"
