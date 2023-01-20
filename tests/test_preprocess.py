@@ -19,6 +19,7 @@ from preprocess import (
     merge_orgs,
     merge_pens,
     merge_pers,
+    text_to_codes,
 )
 
 
@@ -1218,8 +1219,18 @@ class TestLemmasCodes:
         "забить": 4,
         "гол": 5,
         "московский": 6,
+        "per": 7,
+        "org": 8,
+        "loc": 9,
+        "date": 10,
+        "набрать": 11,
+        "очко": 12,
+        "карьера": 13,
+        "февраль": 14,
+        "в": 15,
     }
     lemmas = ["сегодня", "московский", "команда", "забить", "красивый", "гол", "."]
+    text = "21 февраля в Казани Иван Иванов набрал сотое очко за карьеру за 'Торпедо'"
 
     @pytest.mark.parametrize(
         "max_len,expected_codes",
@@ -1256,3 +1267,32 @@ class TestLemmasCodes:
             "команда": 5,
             "клуб": 6,
         }
+
+    @pytest.mark.parametrize(
+        "replace_ners_,replace_dates_,replace_penalties_,exclude_stop_words,expected_codes",
+        [
+            (False, False, False, False, [14, 15, 1, 11, 1, 12, 1, 13, 1]),
+            (True, True, True, True, [10, 9, 7, 11, 1, 12, 13, 8]),
+        ],
+    )
+    def test_text_to_codes(
+        self,
+        replace_ners_,
+        replace_dates_,
+        replace_penalties_,
+        exclude_stop_words,
+        expected_codes,
+        max_len=None,
+    ):
+        assert (
+            text_to_codes(
+                self.text,
+                replace_ners_,
+                replace_dates_,
+                replace_penalties_,
+                exclude_stop_words,
+                self.freq_dict,
+                max_len,
+            )
+            == expected_codes
+        )

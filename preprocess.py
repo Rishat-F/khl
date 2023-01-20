@@ -232,3 +232,38 @@ def get_freq_dict(lemmas_dictionary_file: Path) -> Dict[Lemma, Code]:
     for freq, word in enumerate(lemmas_dict, len(freq_dict)):
         freq_dict[word] = freq
     return freq_dict
+
+
+def text_to_codes(
+    text: str,
+    replace_ners_: bool,
+    replace_dates_: bool,
+    replace_penalties_: bool,
+    exclude_stop_words: bool,
+    freq_dict: Dict[Lemma, Code],
+    max_len: Optional[int] = None,
+) -> List[Code]:
+    """
+    Преобразует текст в последовательность кодов.
+
+    args:
+      text: текст новости
+      replace_ners_: если True, то в тексте имена людей заменяются на
+        слово 'per', названия команд заменяются на слово 'org',
+        названия городов заменяются на слово 'loc'
+      replace_dates_: если True, то в тексте даты заменяются на слово 'date'
+      replace_penalties_: если True, то в тексте удаления вида '2+10'
+        заменяются на слово 'pen'
+      exclude_stop_words: если True, то стоп-слова исключаются
+      freq_dict: частотный словарь, на основе которого проставляются коды
+      max_len: длина последовательности на выходе
+    """
+    lemmas = lemmatize(
+        text,
+        replace_ners_,
+        replace_dates_,
+        replace_penalties_,
+        exclude_stop_words,
+    )
+    codes = lemmas_to_codes(lemmas, freq_dict, max_len)
+    return codes
