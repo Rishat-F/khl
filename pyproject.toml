@@ -2,7 +2,9 @@
 name = "khl"
 version = "0.1.0"
 description = "Preparing russian hockey news for machine learning"
+licence = "MIT"
 authors = ["Rishat Fayzullin <nilluziaf@gmail.com>"]
+repository = "https://github.com/Rishat-F/khl"
 
 [tool.poetry.dependencies]
 python = "^3.10"
