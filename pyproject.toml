@@ -2,7 +2,7 @@
 name = "khl"
 version = "0.1.0"
 description = "Preparing russian hockey news for machine learning"
-licence = "MIT"
+license = "MIT"
 authors = ["Rishat Fayzullin <nilluziaf@gmail.com>"]
 repository = "https://github.com/Rishat-F/khl"
 
