@@ -9,6 +9,7 @@ from utils import (
     delete_beginning_ending_dashes_in_words,
     delete_birth_mark,
     delete_cirillic_ending_from_english_words,
+    delete_ending_colon_dash,
     delete_letter_dot_letter_dot,
     delete_numeric_data,
     delete_one_symbol_english_words,
@@ -1225,6 +1226,20 @@ def test_fix_org_loc(source_text, expected_text):
 )
 def test_replace_concrete_orgs(source_text, expected_text):
     assert replace_concrete_orgs(source_text) == expected_text
+
+
+@pytest.mark.parametrize(
+    "source_text,expected_text",
+    [
+        ("Текст", "Текст"),
+        ("-Текст - : текст", "-Текст - : текст"),
+        (" - Текст:  -  ", " - Текст"),
+        ("Текст. - ", "Текст."),
+        ("Текст? -: --", "Текст?"),
+    ],
+)
+def test_delete_ending_colon_dash(source_text, expected_text):
+    assert delete_ending_colon_dash(source_text) == expected_text
 
 
 @pytest.mark.parametrize(

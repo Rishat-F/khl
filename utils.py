@@ -565,6 +565,11 @@ def fix_org_loc(text: str) -> str:
     return re.sub(pattern, "org", text)
 
 
+def delete_ending_colon_dash(text: str) -> str:
+    """'Текст : - ' -> 'Текст'."""
+    return text.rstrip(" -:")
+
+
 def simplify_text(
     text: str,
     replace_ners_: bool,
@@ -632,6 +637,7 @@ def simplify_text(
       43. Корректируем вопросительные знаки
       44. Корректируем '?..' -> '?'
       45. Корректируем '..?' -> '?'
+      46. Удаляем тире и двоеточия в конце текста (rstrip)
     """
     text = delete_parentheses_content(text)
     text = replace_tak_kak(text)
@@ -682,4 +688,5 @@ def simplify_text(
     text = fix_question_marks(text)
     text = fix_question_dot(text)
     text = fix_dot_question(text)
+    text = delete_ending_colon_dash(text)
     return text.strip()
