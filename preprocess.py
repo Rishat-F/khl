@@ -20,7 +20,7 @@ PLACEHOLDER = ""
 UNKNOWN = "???"
 
 
-morph_tagger = NewsMorphTagger(emb)  # pragma: no mutate
+morph_tagger = NewsMorphTagger(emb)
 
 
 Word = str  # pragma: no mutate
@@ -39,10 +39,10 @@ def _merge(text_list: List[Word], source_word: Ner, target_word: Word) -> List[W
         target_word='words'
     ) -> ['1', '1', 'words', '1', 'word']
     """
-    merged_words_text_list = []  # pragma: no mutate
+    merged_words_text_list = []
     for word, grouper in groupby(text_list):
-        group = list(grouper)  # pragma: no mutate
-        if word == source_word and len(group) > 1:  # pragma: no mutate
+        group = list(grouper)
+        if word == source_word and len(group) > 1:
             merged_words_text_list.append(target_word)
         else:
             merged_words_text_list.extend(group)
@@ -90,10 +90,10 @@ def _tokenize(text: str) -> List[DocToken]:
     к какой части речи токен принадлежит, в каком он роде, числе и падеже.
     Это нужно для дальнейшей лемматизации - приведению токена к начальной форме.
     """
-    doc = Doc(text)  # pragma: no mutate
+    doc = Doc(text)
     doc.segment(segmenter)
     doc.tag_morph(morph_tagger)
-    tokens: List[DocToken] = doc.tokens  # pragma: no mutate
+    tokens: List[DocToken] = doc.tokens
     return tokens
 
 
@@ -150,16 +150,12 @@ def lemmatize(
         exclude_stop_words=True,
       ) -> ["date", "pers", "забить", "гол", "борт"]
     """
-    text = simplify_text(
-        text, replace_ners_, replace_dates_, replace_penalties_
-    )  # pragma: no mutate
-    text_tokens = _tokenize(text)  # pragma: no mutate
+    text = simplify_text(text, replace_ners_, replace_dates_, replace_penalties_)
+    text_tokens = _tokenize(text)
     for token in text_tokens:
         token.lemmatize(morph_vocab)
-    if not exclude_stop_words:  # pragma: no mutate
-        text_lemmas: List[Lemma] = [
-            fix_lemma(token.lemma) for token in text_tokens
-        ]  # pragma: no mutate
+    if not exclude_stop_words:
+        text_lemmas: List[Lemma] = [fix_lemma(token.lemma) for token in text_tokens]
     else:
         text_lemmas = [
             fix_lemma(token.lemma)
