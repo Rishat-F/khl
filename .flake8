@@ -3,3 +3,7 @@ max-doc-length = 88
 max-line-length = 88
 extend-ignore = E203
 exclude = tests/*
+per-file-ignores=
+    __init__.py:
+        # imported but unused
+        F401,

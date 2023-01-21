@@ -12,8 +12,8 @@ from typing import Dict, List, Literal, Optional
 from natasha import Doc, NewsMorphTagger
 from natasha.doc import DocToken
 
-from utils import emb, morph_vocab, segmenter, simplify_text
-from wrong_lemmas import fixed_lemmas
+from khl.utils import emb, morph_vocab, segmenter, simplify_text
+from khl.wrong_lemmas import fixed_lemmas
 
 PLACEHOLDER = ""
 UNKNOWN = "???"

@@ -2,7 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from preprocess import (
+from khl import stop_words
+from khl.preprocess import (
     PLACEHOLDER,
     UNKNOWN,
     codes_to_lemmas,
@@ -20,7 +21,6 @@ from preprocess import (
     merge_pers,
     text_to_codes,
 )
-from stop_words import stop_words
 
 
 @pytest.mark.parametrize(

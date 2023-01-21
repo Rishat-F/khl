@@ -22,7 +22,7 @@ from natasha import (
 from natasha.extractors import Match as NatashaMatch
 from natasha.span import Span
 
-from teams_orgs import teams_orgs_pattern
+from khl.teams_orgs import teams_orgs_pattern
 
 segmenter = Segmenter()
 morph_vocab = MorphVocab()  # pragma: no mutate

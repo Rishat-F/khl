@@ -3,7 +3,7 @@
 
 import pytest
 
-from utils import (
+from khl.utils import (
     delete_age_category,
     delete_amplua,
     delete_beginning_ending_dashes_in_words,
