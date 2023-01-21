@@ -167,88 +167,88 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
 
 
 @pytest.mark.parametrize(
-    "source_text,replace_ners_,replace_dates_,replace_penalties_,stop_words,expected_lemmas",
+    "source_text,stop_words,replace_ners_,replace_dates_,replace_penalties_,expected_lemmas",
     [
         (
             "Очень-очень хотим победить",
-            False,
-            False,
-            False,
             None,
+            False,
+            False,
+            False,
             ["очень", "хотеть", "победить"],
         ),
         pytest.param(
             "Очень-очень хотим победить",
-            False,
-            False,
-            False,
             stop_words,
+            False,
+            False,
+            False,
             ["хотеть", "победить"],
             marks=pytest.mark.bug_1,
         ),
         (
             "- Как сыграли? - 2:2.",
-            False,
-            False,
-            False,
             stop_words,
+            False,
+            False,
+            False,
             ["-", "как", "сыграть", "?"],
         ),
         (
             "- Играете в футбол? - Иногда.",
-            False,
-            False,
-            False,
             stop_words,
+            False,
+            False,
+            False,
             ["-", "играть", "футбол", "?", "-", "."],
         ),
         (
             "- Сколько выходных дадите команде? - 2.",
-            False,
-            False,
-            False,
             None,
+            False,
+            False,
+            False,
             ["-", "сколько", "выходной", "дать", "команда", "?"],
         ),
         (
             "Сегодня Ансель Галимов забил несколько голов",
-            False,
-            False,
-            False,
             stop_words,
+            False,
+            False,
+            False,
             ["сегодня", "ансель", "галимов", "забить", "гол"],
         ),
         (
             "Мы побеждали и 3:2, и 4:3, и 1:0",
-            False,
-            False,
-            False,
             stop_words,
+            False,
+            False,
+            False,
             ["мы", "побеждать"],
         ),
         (
             "Он забивал, забивает и еще забивать будет много сезонов",
-            False,
-            False,
-            False,
             stop_words,
+            False,
+            False,
+            False,
             ["он", "забивать", "быть", "сезон"],
         ),
         (
             "Артем Лукоянов и Дмитрий Воронков забили по голу",
+            stop_words,
             True,
             False,
             False,
-            stop_words,
             ["pers", "забить", "гол"],
         ),
         (
             "21 января Шипачев и Зарипов в Москве забили много голов 'Спартаку', "
             "а Сергей Широков получил 5+20 за грубость",
-            True,
-            True,
-            True,
             stop_words,
+            True,
+            True,
+            True,
             [
                 "date",
                 "pers",
@@ -265,10 +265,10 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
         (
             "21 января Шипачев и Зарипов в Москве забили много голов 'Спартаку', "
             "а Сергей Широков получил 5+20 за 'Грубость'",
-            False,
-            False,
-            False,
             None,
+            False,
+            False,
+            False,
             [
                 "январь",
                 "шипачев",
@@ -292,19 +292,19 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
 )
 def test_lemmatize(
     source_text,
+    stop_words,
     replace_ners_,
     replace_dates_,
     replace_penalties_,
-    stop_words,
     expected_lemmas,
 ):
     assert (
         lemmatize(
             source_text,
+            stop_words,
             replace_ners_,
             replace_dates_,
             replace_penalties_,
-            stop_words,
         )
         == expected_lemmas
     )
@@ -1206,10 +1206,10 @@ def test_lemmatize_with_stop_words_and_all_replacements(source_text, expected_le
     assert (
         lemmatize(
             text=source_text,
+            stop_words=None,
             replace_ners_=True,
             replace_dates_=True,
             replace_penalties_=True,
-            stop_words=None,
         )
         == expected_lemmas
     )
@@ -1296,19 +1296,19 @@ class TestLemmasCodes:
         }
 
     @pytest.mark.parametrize(
-        "replace_ners_,replace_dates_,replace_penalties_,stop_words,exclude_unknown,expected_codes",
+        "stop_words,replace_ners_,replace_dates_,replace_penalties_,exclude_unknown,expected_codes",
         [
-            (False, False, False, None, False, [14, 15, 1, 11, 1, 12, 1, 13, 1]),
-            (True, True, True, stop_words, False, [10, 9, 7, 11, 1, 12, 13, 8]),
-            (False, False, False, None, True, [14, 15, 11, 12, 13]),
+            (None, False, False, False, False, [14, 15, 1, 11, 1, 12, 1, 13, 1]),
+            (stop_words, True, True, True, False, [10, 9, 7, 11, 1, 12, 13, 8]),
+            (None, False, False, False, True, [14, 15, 11, 12, 13]),
         ],
     )
     def test_text_to_codes(
         self,
+        stop_words,
         replace_ners_,
         replace_dates_,
         replace_penalties_,
-        stop_words,
         exclude_unknown,
         expected_codes,
         max_len=None,
@@ -1316,12 +1316,12 @@ class TestLemmasCodes:
         assert (
             text_to_codes(
                 self.text,
+                self.freq_dict,
+                stop_words,
                 replace_ners_,
                 replace_dates_,
                 replace_penalties_,
-                stop_words,
                 exclude_unknown,
-                self.freq_dict,
                 max_len,
             )
             == expected_codes

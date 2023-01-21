@@ -119,10 +119,10 @@ def fix_lemma(lemma: Lemma) -> Lemma:
 
 def lemmatize(
     text: str,
+    stop_words: Optional[List[Lemma]],
     replace_ners_: bool,
     replace_dates_: bool,
     replace_penalties_: bool,
-    stop_words: Optional[List[Lemma]],
 ) -> List[Lemma]:
     """
     Разбивка текста на леммы.
@@ -131,17 +131,17 @@ def lemmatize(
     Примеры:
       lemmatize(
         text="1 мая Морозов и Семин забили много голов от борта",
+        stop_words=None,
         replace_ners_=False,
         replace_dates_=False,
         replace_penalties_=False,
-        exclude_stop_words=False,
       ) -> ["май", "морозов", "и", "семин", "забить", "много", "гол", "от", "борт"]
       lemmatize(
-        text="1 января мне пришло много писем от Ивана и Маши",
+        text="1 мая Морозов и Семин забили много голов от борта",
+        stop_words=["и", "много", "от"],
         replace_ners_=True,
         replace_dates_=True,
         replace_penalties_=True,
-        exclude_stop_words=True,
       ) -> ["date", "pers", "забить", "гол", "борт"]
     """
     text = simplify_text(text, replace_ners_, replace_dates_, replace_penalties_)
@@ -243,12 +243,12 @@ def get_freq_dict(lemmas_dictionary_file: Path) -> Dict[Lemma, Code]:
 
 def text_to_codes(
     text: str,
+    freq_dict: Dict[Lemma, Code],
+    stop_words: Optional[List[Lemma]],
     replace_ners_: bool,
     replace_dates_: bool,
     replace_penalties_: bool,
-    stop_words: Optional[List[Lemma]],
     exclude_unknown: bool,
-    freq_dict: Dict[Lemma, Code],
     max_len: Optional[int] = None,
 ) -> List[Code]:
     """
@@ -256,25 +256,25 @@ def text_to_codes(
 
     args:
       text: текст новости
+      freq_dict: частотный словарь, на основе которого проставляются коды
+      stop_words: стоп-слова для исключения
       replace_ners_: если True, то в тексте имена людей заменяются на
         слово 'per', названия команд заменяются на слово 'org',
         названия городов заменяются на слово 'loc'
       replace_dates_: если True, то в тексте даты заменяются на слово 'date'
       replace_penalties_: если True, то в тексте удаления вида '2+10'
         заменяются на слово 'pen'
-      exclude_stop_words: если True, то стоп-слова исключаются
       exclude_unknown: если True, то слова, которых нет в частотном словаре,
         отбрасываются; если False, то слова, которых нет в частотном словаре,
         заменяются на код неизвестного слова
-      freq_dict: частотный словарь, на основе которого проставляются коды
       max_len: длина последовательности на выходе
     """
     lemmas = lemmatize(
         text,
+        stop_words,
         replace_ners_,
         replace_dates_,
         replace_penalties_,
-        stop_words,
     )
     codes = lemmas_to_codes(lemmas, freq_dict, exclude_unknown, max_len)
     return codes
