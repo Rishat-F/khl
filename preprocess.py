@@ -177,12 +177,25 @@ def merge_codes(codes: List[Code]) -> List[Code]:
 def lemmas_to_codes(
     lemmas: List[Lemma],
     freq_dict: Dict[Lemma, Code],
+    exclude_unknown: bool,
     max_len: Optional[int] = None,
 ) -> List[Code]:
-    """Преобразует последовательность лемм в последовательность их кодов."""
+    """
+    Преобразует последовательность лемм в последовательность их кодов.
+
+    exclude_unknown:
+      если True, то леммы, которых нет в частотном словаре, отбрасываются;
+      если False, то для лемм, которых нет в частотном словаре,
+        проставляется код неизвестного слова
+    """
     codes = []
     for lemma in lemmas:
-        codes.append(freq_dict.get(lemma, freq_dict[UNKNOWN]))
+        if not exclude_unknown:
+            codes.append(freq_dict.get(lemma, freq_dict[UNKNOWN]))
+        elif lemma in freq_dict:
+            codes.append(freq_dict[lemma])
+        else:
+            continue
     codes = merge_codes(codes)
     if max_len is None:
         return codes
@@ -240,6 +253,7 @@ def text_to_codes(
     replace_dates_: bool,
     replace_penalties_: bool,
     exclude_stop_words: bool,
+    exclude_unknown: bool,
     freq_dict: Dict[Lemma, Code],
     max_len: Optional[int] = None,
 ) -> List[Code]:
@@ -255,6 +269,9 @@ def text_to_codes(
       replace_penalties_: если True, то в тексте удаления вида '2+10'
         заменяются на слово 'pen'
       exclude_stop_words: если True, то стоп-слова исключаются
+      exclude_unknown: если True, то слова, которых нет в частотном словаре,
+        отбрасываются; если False, то слова, которых нет в частотном словаре,
+        заменяются на код неизвестного слова
       freq_dict: частотный словарь, на основе которого проставляются коды
       max_len: длина последовательности на выходе
     """
@@ -265,5 +282,5 @@ def text_to_codes(
         replace_penalties_,
         exclude_stop_words,
     )
-    codes = lemmas_to_codes(lemmas, freq_dict, max_len)
+    codes = lemmas_to_codes(lemmas, freq_dict, exclude_unknown, max_len)
     return codes

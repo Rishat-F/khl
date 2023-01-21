@@ -1257,15 +1257,21 @@ class TestLemmasCodes:
     text = "21 февраля в Казани Иван Иванов набрал сотое очко за карьеру за 'Торпедо'"
 
     @pytest.mark.parametrize(
-        "max_len,expected_codes",
+        "exclude_unknown,max_len,expected_codes",
         [
-            (None, [1, 6, 3, 4, 1, 5, 2]),
-            (5, [1, 6, 3, 4, 1]),
-            (10, [0, 0, 0, 1, 6, 3, 4, 1, 5, 2]),
+            (False, None, [1, 6, 3, 4, 1, 5, 2]),
+            (False, 5, [1, 6, 3, 4, 1]),
+            (False, 10, [0, 0, 0, 1, 6, 3, 4, 1, 5, 2]),
+            (True, None, [6, 3, 4, 5, 2]),
+            (True, 3, [6, 3, 4]),
+            (True, 10, [0, 0, 0, 0, 0, 6, 3, 4, 5, 2]),
         ],
     )
-    def test_lemmas_to_codes(self, max_len, expected_codes):
-        assert lemmas_to_codes(self.lemmas, self.freq_dict, max_len) == expected_codes
+    def test_lemmas_to_codes(self, exclude_unknown, max_len, expected_codes):
+        assert (
+            lemmas_to_codes(self.lemmas, self.freq_dict, exclude_unknown, max_len)
+            == expected_codes
+        )
 
     @pytest.mark.parametrize(
         "codes,expected_lemmas",
@@ -1293,10 +1299,11 @@ class TestLemmasCodes:
         }
 
     @pytest.mark.parametrize(
-        "replace_ners_,replace_dates_,replace_penalties_,exclude_stop_words,expected_codes",
+        "replace_ners_,replace_dates_,replace_penalties_,exclude_stop_words,exclude_unknown,expected_codes",
         [
-            (False, False, False, False, [14, 15, 1, 11, 1, 12, 1, 13, 1]),
-            (True, True, True, True, [10, 9, 7, 11, 1, 12, 13, 8]),
+            (False, False, False, False, False, [14, 15, 1, 11, 1, 12, 1, 13, 1]),
+            (True, True, True, True, False, [10, 9, 7, 11, 1, 12, 13, 8]),
+            (False, False, False, False, True, [14, 15, 11, 12, 13]),
         ],
     )
     def test_text_to_codes(
@@ -1305,6 +1312,7 @@ class TestLemmasCodes:
         replace_dates_,
         replace_penalties_,
         exclude_stop_words,
+        exclude_unknown,
         expected_codes,
         max_len=None,
     ):
@@ -1315,6 +1323,7 @@ class TestLemmasCodes:
                 replace_dates_,
                 replace_penalties_,
                 exclude_stop_words,
+                exclude_unknown,
                 self.freq_dict,
                 max_len,
             )
