@@ -190,6 +190,22 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
     "source_text,replace_ners_,replace_dates_,replace_penalties_,exclude_stop_words,expected_lemmas",
     [
         (
+            "Очень-очень хотим победить",
+            False,
+            False,
+            False,
+            False,
+            ["очень", "хотеть", "победить"],
+        ),
+        (
+            "Очень-очень хотим победить",
+            False,
+            False,
+            False,
+            True,
+            ["хотеть", "победить"],
+        ),
+        (
             "- Как сыграли? - 2:2.",
             False,
             False,
