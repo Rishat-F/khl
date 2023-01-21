@@ -8,7 +8,6 @@ from preprocess import (
     codes_to_lemmas,
     fix_lemma,
     get_freq_dict,
-    is_stop_word,
     lemmas_to_codes,
     lemmatize,
     merge_codes,
@@ -21,6 +20,7 @@ from preprocess import (
     merge_pers,
     text_to_codes,
 )
+from stop_words import stop_words
 
 
 @pytest.mark.parametrize(
@@ -155,26 +155,6 @@ def test_fix_lemma(source_lemma, expected_lemma):
 
 
 @pytest.mark.parametrize(
-    "lemma,is_stop_word_",
-    [
-        ("", False),
-        (" ", False),
-        (":", False),
-        ("-", False),
-        (".", False),
-        ("?", False),
-        ("per", False),
-        ("текст", False),
-        ("и", True),
-        ("или", True),
-        ("а", True),
-    ],
-)
-def test_is_stop_word(lemma, is_stop_word_):
-    assert is_stop_word(lemma) is is_stop_word_
-
-
-@pytest.mark.parametrize(
     "source_lemmas,expected_lemmas",
     [
         (["и", "или", "текст"], ["и", "или", "текст"]),
@@ -187,14 +167,14 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
 
 
 @pytest.mark.parametrize(
-    "source_text,replace_ners_,replace_dates_,replace_penalties_,exclude_stop_words,expected_lemmas",
+    "source_text,replace_ners_,replace_dates_,replace_penalties_,stop_words,expected_lemmas",
     [
         (
             "Очень-очень хотим победить",
             False,
             False,
             False,
-            False,
+            None,
             ["очень", "хотеть", "победить"],
         ),
         pytest.param(
@@ -202,16 +182,16 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
             False,
             False,
             False,
-            True,
+            stop_words,
             ["хотеть", "победить"],
-            marks=[pytest.mark.bug_1, pytest.mark.xfail(reason="Bug_1 not fixed yet")],
+            marks=pytest.mark.bug_1,
         ),
         (
             "- Как сыграли? - 2:2.",
             False,
             False,
             False,
-            True,
+            stop_words,
             ["-", "как", "сыграть", "?"],
         ),
         (
@@ -219,7 +199,7 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
             False,
             False,
             False,
-            True,
+            stop_words,
             ["-", "играть", "футбол", "?", "-", "."],
         ),
         (
@@ -227,7 +207,7 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
             False,
             False,
             False,
-            False,
+            None,
             ["-", "сколько", "выходной", "дать", "команда", "?"],
         ),
         (
@@ -235,7 +215,7 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
             False,
             False,
             False,
-            True,
+            stop_words,
             ["сегодня", "ансель", "галимов", "забить", "гол"],
         ),
         (
@@ -243,7 +223,7 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
             False,
             False,
             False,
-            True,
+            stop_words,
             ["мы", "побеждать"],
         ),
         (
@@ -251,7 +231,7 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
             False,
             False,
             False,
-            True,
+            stop_words,
             ["он", "забивать", "быть", "сезон"],
         ),
         (
@@ -259,7 +239,7 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
             True,
             False,
             False,
-            True,
+            stop_words,
             ["pers", "забить", "гол"],
         ),
         (
@@ -268,7 +248,7 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
             True,
             True,
             True,
-            True,
+            stop_words,
             [
                 "date",
                 "pers",
@@ -288,7 +268,7 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
             False,
             False,
             False,
-            False,
+            None,
             [
                 "январь",
                 "шипачев",
@@ -315,7 +295,7 @@ def test_lemmatize(
     replace_ners_,
     replace_dates_,
     replace_penalties_,
-    exclude_stop_words,
+    stop_words,
     expected_lemmas,
 ):
     assert (
@@ -324,7 +304,7 @@ def test_lemmatize(
             replace_ners_,
             replace_dates_,
             replace_penalties_,
-            exclude_stop_words,
+            stop_words,
         )
         == expected_lemmas
     )
@@ -1229,7 +1209,7 @@ def test_lemmatize_with_stop_words_and_all_replacements(source_text, expected_le
             replace_ners_=True,
             replace_dates_=True,
             replace_penalties_=True,
-            exclude_stop_words=False,
+            stop_words=None,
         )
         == expected_lemmas
     )
@@ -1316,11 +1296,11 @@ class TestLemmasCodes:
         }
 
     @pytest.mark.parametrize(
-        "replace_ners_,replace_dates_,replace_penalties_,exclude_stop_words,exclude_unknown,expected_codes",
+        "replace_ners_,replace_dates_,replace_penalties_,stop_words,exclude_unknown,expected_codes",
         [
-            (False, False, False, False, False, [14, 15, 1, 11, 1, 12, 1, 13, 1]),
-            (True, True, True, True, False, [10, 9, 7, 11, 1, 12, 13, 8]),
-            (False, False, False, False, True, [14, 15, 11, 12, 13]),
+            (False, False, False, None, False, [14, 15, 1, 11, 1, 12, 1, 13, 1]),
+            (True, True, True, stop_words, False, [10, 9, 7, 11, 1, 12, 13, 8]),
+            (False, False, False, None, True, [14, 15, 11, 12, 13]),
         ],
     )
     def test_text_to_codes(
@@ -1328,7 +1308,7 @@ class TestLemmasCodes:
         replace_ners_,
         replace_dates_,
         replace_penalties_,
-        exclude_stop_words,
+        stop_words,
         exclude_unknown,
         expected_codes,
         max_len=None,
@@ -1339,7 +1319,7 @@ class TestLemmasCodes:
                 replace_ners_,
                 replace_dates_,
                 replace_penalties_,
-                exclude_stop_words,
+                stop_words,
                 exclude_unknown,
                 self.freq_dict,
                 max_len,

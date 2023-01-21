@@ -12,7 +12,6 @@ from typing import Dict, List, Literal, Optional
 from natasha import Doc, NewsMorphTagger
 from natasha.doc import DocToken
 
-from stop_words import stop_words
 from utils import emb, morph_vocab, segmenter, simplify_text
 from wrong_lemmas import fixed_lemmas
 
@@ -118,17 +117,12 @@ def fix_lemma(lemma: Lemma) -> Lemma:
     return fixed_lemmas.get(lemma, lemma)
 
 
-def is_stop_word(lemma: Lemma) -> bool:
-    """Является ли лемма стоп-словом."""
-    return lemma in stop_words
-
-
 def lemmatize(
     text: str,
     replace_ners_: bool,
     replace_dates_: bool,
     replace_penalties_: bool,
-    exclude_stop_words: bool,
+    stop_words: Optional[List[Lemma]],
 ) -> List[Lemma]:
     """
     Разбивка текста на леммы.
@@ -154,13 +148,13 @@ def lemmatize(
     text_tokens = _tokenize(text)
     for token in text_tokens:
         token.lemmatize(morph_vocab)
-    if not exclude_stop_words:
+    if stop_words is None:
         text_lemmas: List[Lemma] = [fix_lemma(token.lemma) for token in text_tokens]
     else:
         text_lemmas = [
-            fix_lemma(token.lemma)
+            fixed_lemma
             for token in text_tokens
-            if not is_stop_word(token.lemma)
+            if (fixed_lemma := fix_lemma(token.lemma)) not in stop_words
         ]
     return merge_lemmas(merge_ners(text_lemmas))
 
@@ -252,7 +246,7 @@ def text_to_codes(
     replace_ners_: bool,
     replace_dates_: bool,
     replace_penalties_: bool,
-    exclude_stop_words: bool,
+    stop_words: Optional[List[Lemma]],
     exclude_unknown: bool,
     freq_dict: Dict[Lemma, Code],
     max_len: Optional[int] = None,
@@ -280,7 +274,7 @@ def text_to_codes(
         replace_ners_,
         replace_dates_,
         replace_penalties_,
-        exclude_stop_words,
+        stop_words,
     )
     codes = lemmas_to_codes(lemmas, freq_dict, exclude_unknown, max_len)
     return codes
