@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from khl import stop_words
+from khl import stop_words, text_to_codes
 from khl.preprocess import (
     PLACEHOLDER,
     UNKNOWN,
@@ -19,8 +19,8 @@ from khl.preprocess import (
     merge_orgs,
     merge_pens,
     merge_pers,
-    text_to_codes,
 )
+from khl.utils import simplify_text
 
 
 @pytest.mark.parametrize(
@@ -167,88 +167,48 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
 
 
 @pytest.mark.parametrize(
-    "source_text,stop_words,replace_ners_,replace_dates_,replace_penalties_,expected_lemmas",
+    "source_text,stop_words_,expected_lemmas",
     [
         (
             "Очень-очень хотим победить",
             None,
-            False,
-            False,
-            False,
             ["очень", "хотеть", "победить"],
         ),
         pytest.param(
             "Очень-очень хотим победить",
             stop_words,
-            False,
-            False,
-            False,
             ["хотеть", "победить"],
             marks=pytest.mark.bug_1,
         ),
         (
-            "- Как сыграли? - 2:2.",
-            stop_words,
-            False,
-            False,
-            False,
-            ["-", "как", "сыграть", "?"],
-        ),
-        (
             "- Играете в футбол? - Иногда.",
             stop_words,
-            False,
-            False,
-            False,
             ["-", "играть", "футбол", "?", "-", "."],
-        ),
-        (
-            "- Сколько выходных дадите команде? - 2.",
-            None,
-            False,
-            False,
-            False,
-            ["-", "сколько", "выходной", "дать", "команда", "?"],
         ),
         (
             "Сегодня Ансель Галимов забил несколько голов",
             stop_words,
-            False,
-            False,
-            False,
             ["сегодня", "ансель", "галимов", "забить", "гол"],
         ),
         (
-            "Мы побеждали и 3:2, и 4:3, и 1:0",
+            "Мы побеждали и и и",
             stop_words,
-            False,
-            False,
-            False,
             ["мы", "побеждать"],
         ),
         (
-            "Он забивал, забивает и еще забивать будет много сезонов",
+            "Он забивал забивает и еще забивать будет много сезонов",
             stop_words,
-            False,
-            False,
-            False,
             ["он", "забивать", "быть", "сезон"],
         ),
         (
-            "Артем Лукоянов и Дмитрий Воронков забили по голу",
+            "per и per забили по голу",
             stop_words,
-            True,
-            False,
-            False,
             ["pers", "забить", "гол"],
         ),
         (
-            "21 января Шипачев и Зарипов в Москве забили много голов 'Спартаку', "
-            "а Сергей Широков получил 5+20 за грубость",
+            "date per и per в loc забили много голов org "
+            "а per получил pen за грубость",
             stop_words,
-            True,
-            True,
-            True,
             [
                 "date",
                 "pers",
@@ -263,12 +223,9 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
             ],
         ),
         (
-            "21 января Шипачев и Зарипов в Москве забили много голов 'Спартаку', "
-            "а Сергей Широков получил 5+20 за 'Грубость'",
+            "января Шипачев и Зарипов в Москве забили много голов Спартаку "
+            "а Сергей Широков получил за Грубость",
             None,
-            False,
-            False,
-            False,
             [
                 "январь",
                 "шипачев",
@@ -290,24 +247,8 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
         ),
     ],
 )
-def test_lemmatize(
-    source_text,
-    stop_words,
-    replace_ners_,
-    replace_dates_,
-    replace_penalties_,
-    expected_lemmas,
-):
-    assert (
-        lemmatize(
-            source_text,
-            stop_words,
-            replace_ners_,
-            replace_dates_,
-            replace_penalties_,
-        )
-        == expected_lemmas
-    )
+def test_lemmatize(source_text, stop_words_, expected_lemmas):
+    assert lemmatize(source_text, stop_words_) == expected_lemmas
 
 
 @pytest.mark.parametrize(
@@ -1202,17 +1143,17 @@ def test_lemmatize(
         ),
     ],
 )
-def test_lemmatize_with_stop_words_and_all_replacements(source_text, expected_lemmas):
-    assert (
-        lemmatize(
-            text=source_text,
-            stop_words=None,
-            replace_ners_=True,
-            replace_dates_=True,
-            replace_penalties_=True,
-        )
-        == expected_lemmas
+def test_simplify_plus_lemmatize_all_replacements_and_stop_words(
+    source_text, expected_lemmas
+):
+    """Интеграционный тест((( Пусть пока тут лежит."""
+    simplified_text = simplify_text(
+        source_text,
+        replace_ners_=True,
+        replace_dates_=True,
+        replace_penalties_=True,
     )
+    assert lemmatize(text=simplified_text, stop_words_=None) == expected_lemmas
 
 
 @pytest.mark.parametrize(
@@ -1296,7 +1237,7 @@ class TestLemmasCodes:
         }
 
     @pytest.mark.parametrize(
-        "stop_words,replace_ners_,replace_dates_,replace_penalties_,exclude_unknown,expected_codes",
+        "stop_words_,replace_ners_,replace_dates_,replace_penalties_,exclude_unknown,expected_codes",
         [
             (None, False, False, False, False, [14, 15, 1, 11, 1, 12, 1, 13, 1]),
             (stop_words, True, True, True, False, [10, 9, 7, 11, 1, 12, 13, 8]),
@@ -1305,7 +1246,7 @@ class TestLemmasCodes:
     )
     def test_text_to_codes(
         self,
-        stop_words,
+        stop_words_,
         replace_ners_,
         replace_dates_,
         replace_penalties_,
@@ -1313,11 +1254,12 @@ class TestLemmasCodes:
         expected_codes,
         max_len=None,
     ):
+        """E2e тест((( Пусть пока тут лежит."""
         assert (
             text_to_codes(
                 self.text,
                 self.freq_dict,
-                stop_words,
+                stop_words_,
                 replace_ners_,
                 replace_dates_,
                 replace_penalties_,

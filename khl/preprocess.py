@@ -12,7 +12,7 @@ from typing import Dict, List, Literal, Optional
 from natasha import Doc, NewsMorphTagger
 from natasha.doc import DocToken
 
-from khl.utils import emb, morph_vocab, segmenter, simplify_text
+from khl.utils import emb, morph_vocab, segmenter
 from khl.wrong_lemmas import fixed_lemmas
 
 PLACEHOLDER = ""
@@ -117,13 +117,7 @@ def fix_lemma(lemma: Lemma) -> Lemma:
     return fixed_lemmas.get(lemma, lemma)
 
 
-def lemmatize(
-    text: str,
-    stop_words: Optional[List[Lemma]],
-    replace_ners_: bool,
-    replace_dates_: bool,
-    replace_penalties_: bool,
-) -> List[Lemma]:
+def lemmatize(text: str, stop_words_: Optional[List[Lemma]]) -> List[Lemma]:
     """
     Разбивка текста на леммы.
 
@@ -131,30 +125,23 @@ def lemmatize(
     Примеры:
       lemmatize(
         text="1 мая Морозов и Семин забили много голов от борта",
-        stop_words=None,
-        replace_ners_=False,
-        replace_dates_=False,
-        replace_penalties_=False,
-      ) -> ["май", "морозов", "и", "семин", "забить", "много", "гол", "от", "борт"]
+        stop_words_=None,
+      ) -> ["1", "май", "морозов", "и", "семин", "забить", "много", "гол", "от", "борт"]
       lemmatize(
         text="1 мая Морозов и Семин забили много голов от борта",
-        stop_words=["и", "много", "от"],
-        replace_ners_=True,
-        replace_dates_=True,
-        replace_penalties_=True,
-      ) -> ["date", "pers", "забить", "гол", "борт"]
+        stop_words_=["и", "много", "от"],
+      ) -> ["1", "май", "морозов", "семин", "забить", "гол", "борт"]
     """
-    text = simplify_text(text, replace_ners_, replace_dates_, replace_penalties_)
     text_tokens = _tokenize(text)
     for token in text_tokens:
         token.lemmatize(morph_vocab)
-    if stop_words is None:
+    if stop_words_ is None:
         text_lemmas: List[Lemma] = [fix_lemma(token.lemma) for token in text_tokens]
     else:
         text_lemmas = [
             fixed_lemma
             for token in text_tokens
-            if (fixed_lemma := fix_lemma(token.lemma)) not in stop_words
+            if (fixed_lemma := fix_lemma(token.lemma)) not in stop_words_
         ]
     return merge_lemmas(merge_ners(text_lemmas))
 
@@ -239,42 +226,3 @@ def get_freq_dict(lemmas_dictionary_file: Path) -> Dict[Lemma, Code]:
     for freq, word in enumerate(lemmas_dict, len(freq_dict)):
         freq_dict[word] = freq
     return freq_dict
-
-
-def text_to_codes(
-    text: str,
-    freq_dict: Dict[Lemma, Code],
-    stop_words: Optional[List[Lemma]],
-    replace_ners_: bool,
-    replace_dates_: bool,
-    replace_penalties_: bool,
-    exclude_unknown: bool,
-    max_len: Optional[int] = None,
-) -> List[Code]:
-    """
-    Преобразует текст в последовательность кодов.
-
-    args:
-      text: текст новости
-      freq_dict: частотный словарь, на основе которого проставляются коды
-      stop_words: стоп-слова для исключения
-      replace_ners_: если True, то в тексте имена людей заменяются на
-        слово 'per', названия команд заменяются на слово 'org',
-        названия городов заменяются на слово 'loc'
-      replace_dates_: если True, то в тексте даты заменяются на слово 'date'
-      replace_penalties_: если True, то в тексте удаления вида '2+10'
-        заменяются на слово 'pen'
-      exclude_unknown: если True, то слова, которых нет в частотном словаре,
-        отбрасываются; если False, то слова, которых нет в частотном словаре,
-        заменяются на код неизвестного слова
-      max_len: длина последовательности на выходе
-    """
-    lemmas = lemmatize(
-        text,
-        stop_words,
-        replace_ners_,
-        replace_dates_,
-        replace_penalties_,
-    )
-    codes = lemmas_to_codes(lemmas, freq_dict, exclude_unknown, max_len)
-    return codes
