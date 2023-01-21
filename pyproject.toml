@@ -48,10 +48,10 @@ ignore_missing_imports = true
 omit = ["tests/*"]
 
 [tool.mutmut]
-paths_to_mutate=[
+paths_to_mutate = [
     "teams_orgs.py",
     "utils.py",
     "preprocess.py",
 ]
-runner="python -m pytest -x"
-tests_dir="tests/"
+runner = "python -m pytest -x"
+tests_dir = "tests/"
