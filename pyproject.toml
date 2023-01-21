@@ -55,3 +55,8 @@ paths_to_mutate = [
 ]
 runner = "python -m pytest -x"
 tests_dir = "tests/"
+
+[tool.pytest.ini_options]
+markers = [
+    "bug_1: test for bug_1",
+]

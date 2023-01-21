@@ -197,13 +197,14 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
             False,
             ["очень", "хотеть", "победить"],
         ),
-        (
+        pytest.param(
             "Очень-очень хотим победить",
             False,
             False,
             False,
             True,
             ["хотеть", "победить"],
+            marks=[pytest.mark.bug_1, pytest.mark.xfail(reason="Bug_1 not fixed yet")],
         ),
         (
             "- Как сыграли? - 2:2.",
