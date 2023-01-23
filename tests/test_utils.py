@@ -444,7 +444,6 @@ def test_delete_parentheses_content(source_text, expected_text):
     ],
 )
 def test_delete_overtime_mark(source_text, expected_text):
-    """Проверка удаления пометки овертайма."""
     assert delete_overtime_mark(source_text) == expected_text
 
 
@@ -575,7 +574,6 @@ def test_delete_urls(source_text, expected_text):
     ],
 )
 def test_handwritten_replace_orgs(source_text, expected_text):
-    """Проверка костыльной (самописной) замены orgs."""
     assert handwritten_replace_orgs(source_text) == expected_text
 
 

@@ -7,7 +7,7 @@
 import json
 from itertools import groupby
 from pathlib import Path
-from typing import Dict, List, Literal, Optional
+from typing import Dict, List, Literal, Optional, Union
 
 from natasha import Doc, NewsMorphTagger
 from natasha.doc import DocToken
@@ -206,7 +206,7 @@ def codes_to_lemmas(codes: List[Code], freq_dict: Dict[Lemma, Code]) -> List[Lem
     return lemmas
 
 
-def get_freq_dict(lemmas_dictionary_file: Path) -> Dict[Lemma, Code]:
+def get_freq_dict(lemmas_dictionary_file: Union[Path, str]) -> Dict[Lemma, Code]:
     """
     Преобразует словарь с леммами в частотный словарь лемм.
 
