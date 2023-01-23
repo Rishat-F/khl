@@ -1023,7 +1023,9 @@ def test_e2e(
         «Динамо Мск» - «Спартак» 2:1 ОТ (1:0 0:1 0:0 1:0) Голы забили: Иванов, Петров, Сидоров.
     """
     unified_text = khl.utils.unify_text(text)
-    freq_dict = khl.preprocess.get_freq_dict(tests_dir / "test_lemmas_dictionary.json")
+    freq_dict = khl.preprocess.get_freq_dict(
+        tests_dir / "lemmas_dictionary_for_tests.json"
+    )
     assert (
         khl.text_to_codes(
             unified_text,
