@@ -49,9 +49,10 @@ omit = ["tests/*"]
 
 [tool.mutmut]
 paths_to_mutate = [
-    "teams_orgs.py",
-    "utils.py",
-    "preprocess.py",
+    "khl/teams_orgs.py",
+    "khl/utils.py",
+    "khl/preprocess.py",
+    "khl/__init__.py",
 ]
 runner = "python -m pytest -x"
 tests_dir = "tests/"
