@@ -1,5 +1,7 @@
 """Подготовка русскоязычных текстов хоккейных новостей для обучения нейронных сетей."""
 
+__version__ = "0.1.0"
+
 from typing import Dict, List, Optional
 
 from khl import preprocess, utils

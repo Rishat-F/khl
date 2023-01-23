@@ -1,17 +1,62 @@
 """
 Тесты пакета.
 
-Интеграционные и e2e тесты.
+Тесты метаданных, интеграционные и e2e тесты.
 """
 
 from pathlib import Path
 
 import pytest
+import tomli
 
 import khl
 
 tests_dir = Path(__file__).parent
 project_dir = tests_dir.parent
+
+
+class TestMetadata:
+    PACKAGE_NAME = "khl"
+    PACKAGE_DESCRIPTION = "Preparing russian hockey news for machine learning"
+    PACKAGE_README_FILE = "README.md"
+    PACKAGE_LICENSE = "MIT"
+    PACKAGE_LICENSE_FILE = "LICENSE"
+    PACKAGE_AUTHORS = ["Rishat Fayzullin <nilluziaf@gmail.com>"]
+    PACKAGE_REPOSITORY = "https://github.com/Rishat-F/khl"
+    PACKAGE_DEPS = {"python": "^3.8", "natasha": "==1.4.0"}
+    with open(project_dir / "pyproject.toml", "rb") as frb:
+        PROJECT_TOML = tomli.load(frb)
+
+    def test_version_consistency(self):
+        assert khl.__version__ == self.PROJECT_TOML["tool"]["poetry"]["version"]
+
+    def test_package_name(self):
+        assert self.PROJECT_TOML["tool"]["poetry"]["name"] == self.PACKAGE_NAME
+
+    def test_package_description(self):
+        assert (
+            self.PROJECT_TOML["tool"]["poetry"]["description"]
+            == self.PACKAGE_DESCRIPTION
+        )
+
+    def test_package_readme(self):
+        assert self.PROJECT_TOML["tool"]["poetry"]["readme"] == self.PACKAGE_README_FILE
+        assert (project_dir / self.PACKAGE_README_FILE).exists()
+
+    def test_package_license(self):
+        assert self.PROJECT_TOML["tool"]["poetry"]["license"] == self.PACKAGE_LICENSE
+        assert (project_dir / self.PACKAGE_LICENSE_FILE).exists()
+
+    def test_package_authors(self):
+        assert self.PROJECT_TOML["tool"]["poetry"]["authors"] == self.PACKAGE_AUTHORS
+
+    def test_package_repository(self):
+        assert (
+            self.PROJECT_TOML["tool"]["poetry"]["repository"] == self.PACKAGE_REPOSITORY
+        )
+
+    def test_package_dependencies(self):
+        assert self.PROJECT_TOML["tool"]["poetry"]["dependencies"] == self.PACKAGE_DEPS
 
 
 @pytest.mark.parametrize(
