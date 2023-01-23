@@ -36,6 +36,7 @@ def text_to_codes(
         заменяются на код неизвестного слова
       max_len: длина последовательности на выходе
     """
+    text = utils.unify_text(text)
     text = utils.simplify_text(text, replace_ners_, replace_dates_, replace_penalties_)
     lemmas = preprocess.lemmatize(text, stop_words_)
     codes = preprocess.lemmas_to_codes(lemmas, freq_dict, exclude_unknown, max_len)

@@ -1019,16 +1019,15 @@ def test_e2e(
     expected_codes,
 ):
     text = """
-        1 апреля 2023 года в матче ⅛ финала против „Спартака” Иван Иванов забил свой 100-й гол за карьеру.
+        1 апреля 2023 года в матче ⅛ финала против „Спартака” Иван Иванов забил свой 100—й гол за карьеру.
         «Динамо Мск» - «Спартак» 2:1 ОТ (1:0 0:1 0:0 1:0) Голы забили: Иванов, Петров, Сидоров.
     """
-    unified_text = khl.utils.unify_text(text)
     freq_dict = khl.preprocess.get_freq_dict(
         tests_dir / "lemmas_dictionary_for_tests.json"
     )
     assert (
         khl.text_to_codes(
-            unified_text,
+            text,
             freq_dict,
             stop_words_,
             replace_ners_,
