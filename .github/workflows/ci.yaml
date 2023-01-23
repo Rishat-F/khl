@@ -27,6 +27,14 @@ jobs:
       - name: Setup Poetry
         uses: Gr1N/setup-poetry@v7
 
+      - name: Validate pyproject.toml
+        run: |
+          poetry check
+
+      - name: Verify poetry.lock consistent with pyproject.toml
+        run: |
+          poetry lock --check
+
       - name: Install dependencies
         run: |
           poetry install

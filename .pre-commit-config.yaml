@@ -58,3 +58,10 @@ repos:
       - id: vulture
         args: [".", "--exclude", "*venv*,*.toml,*yaml,*.yml", "--min-confidence", "70"]
   # Analog of vulture: https://github.com/asottile/dead
+
+  - repo: https://github.com/python-poetry/poetry
+    rev: '1.3.0'  # add version here
+    hooks:
+      - id: poetry-check
+      - id: poetry-lock
+        args: ["--check"]
