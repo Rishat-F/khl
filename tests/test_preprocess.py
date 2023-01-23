@@ -10,7 +10,7 @@ from khl.preprocess import (
     UNKNOWN,
     codes_to_lemmas,
     fix_lemma,
-    get_freq_dict,
+    get_lemmas_coder,
     lemmas_to_codes,
     lemmatize,
     merge_codes,
@@ -276,8 +276,8 @@ def test_merge_codes(source_codes, expected_codes):
         str(tests_dir) + "/" + test_lemmas_dictionary_file,
     ],
 )
-def test_get_freq_dict(file_path):
-    assert get_freq_dict(file_path) == {
+def test_get_lemmas_coder(file_path):
+    assert get_lemmas_coder(file_path) == {
         PLACEHOLDER: 0,
         UNKNOWN: 1,
         ".": 2,
@@ -310,7 +310,7 @@ def test_get_freq_dict(file_path):
 
 
 class TestLemmasCodes:
-    freq_dict = {
+    lemmas_coder = {
         PLACEHOLDER: 0,
         UNKNOWN: 1,
         ".": 2,
@@ -334,7 +334,7 @@ class TestLemmasCodes:
     )
     def test_lemmas_to_codes(self, exclude_unknown, max_len, expected_codes):
         assert (
-            lemmas_to_codes(self.lemmas, self.freq_dict, exclude_unknown, max_len)
+            lemmas_to_codes(self.lemmas, self.lemmas_coder, exclude_unknown, max_len)
             == expected_codes
         )
 
@@ -350,4 +350,4 @@ class TestLemmasCodes:
         ],
     )
     def test_codes_to_lemmas(self, codes, expected_lemmas):
-        assert codes_to_lemmas(codes, self.freq_dict) == expected_lemmas
+        assert codes_to_lemmas(codes, self.lemmas_coder) == expected_lemmas

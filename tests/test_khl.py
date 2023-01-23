@@ -1022,13 +1022,13 @@ def test_e2e(
         1 апреля 2023 года в матче ⅛ финала против „Спартака” Иван Иванов забил свой 100—й гол за карьеру.
         «Динамо Мск» - «Спартак» 2:1 ОТ (1:0 0:1 0:0 1:0) Голы забили: Иванов, Петров, Сидоров.
     """
-    freq_dict = khl.preprocess.get_freq_dict(
+    lemmas_coder = khl.preprocess.get_lemmas_coder(
         tests_dir / "lemmas_dictionary_for_tests.json"
     )
     assert (
         khl.text_to_codes(
             text,
-            freq_dict,
+            lemmas_coder,
             stop_words_,
             replace_ners_,
             replace_dates_,
