@@ -1023,7 +1023,7 @@ def test_e2e(
         «Динамо Мск» - «Спартак» 2:1 ОТ (1:0 0:1 0:0 1:0) Голы забили: Иванов, Петров, Сидоров.
     """
     lemmas_coder = khl.preprocess.get_lemmas_coder(
-        tests_dir / "lemmas_dictionary_for_tests.json"
+        tests_dir / "frequency_dictionary_for_tests.json"
     )
     assert (
         khl.text_to_codes(

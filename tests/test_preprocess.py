@@ -24,7 +24,7 @@ from khl.preprocess import (
 )
 
 tests_dir = Path(__file__).parent
-test_lemmas_dictionary_file = "lemmas_dictionary_for_tests.json"
+test_lemmas_dictionary_file = "frequency_dictionary_for_tests.json"
 
 
 @pytest.mark.parametrize(
