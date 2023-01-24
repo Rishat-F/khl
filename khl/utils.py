@@ -689,4 +689,4 @@ def simplify_text(
     text = fix_question_dot(text)
     text = fix_dot_question(text)
     text = delete_ending_colon_dash(text)
-    return text.strip()
+    return merge_spaces(text).strip()

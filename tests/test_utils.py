@@ -1244,6 +1244,13 @@ def test_delete_ending_colon_dash(source_text, expected_text):
     "source_text,expected_text,replace_ners_,replace_dates_,replace_penalties_",
     [
         (
+            "Адмирал - Амур 1:3 (1:0 0:2 0:1)",
+            "org org",
+            True,
+            False,
+            False,
+        ),
+        (
             "21 января Шипачев и Зарипов в Москве забили много голов 'Спартаку', "
             "а Сергей Широков получил 5+20 за 'Грубость'",
             "января Шипачев и Зарипов в Москве забили много голов Спартаку "
