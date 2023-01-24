@@ -24,7 +24,7 @@ from khl.preprocess import (
 )
 
 tests_dir = Path(__file__).parent
-test_lemmas_dictionary_file = "frequency_dictionary_for_tests.json"
+test_frequency_dictionary_file = "example_frequency_dictionary.json"
 
 
 @pytest.mark.parametrize(
@@ -272,8 +272,8 @@ def test_merge_codes(source_codes, expected_codes):
 @pytest.mark.parametrize(
     "file_path",
     [
-        tests_dir / test_lemmas_dictionary_file,
-        str(tests_dir) + "/" + test_lemmas_dictionary_file,
+        tests_dir / test_frequency_dictionary_file,
+        str(tests_dir) + "/" + test_frequency_dictionary_file,
     ],
 )
 def test_get_lemmas_coder(file_path):
@@ -283,29 +283,21 @@ def test_get_lemmas_coder(file_path):
         ".": 2,
         "и": 3,
         "в": 4,
-        "а": 5,
-        "-": 6,
-        ":": 7,
-        "матч": 8,
-        "команда": 9,
-        "клуб": 10,
-        "за": 11,
-        "забить": 12,
-        "гол": 13,
-        "очко": 14,
-        "московский": 15,
-        "per": 16,
-        "org": 17,
-        "loc": 18,
-        "date": 19,
-        "финал": 20,
-        "набрать": 21,
-        "год": 22,
-        "карьера": 23,
-        "апрель": 24,
-        "pers": 25,
-        "orgs": 26,
-        "свой": 27,
+        "-": 5,
+        ":": 6,
+        "матч": 7,
+        "за": 8,
+        "забить": 9,
+        "гол": 10,
+        "per": 11,
+        "org": 12,
+        "loc": 13,
+        "date": 14,
+        "против": 15,
+        "год": 16,
+        "pers": 17,
+        "orgs": 18,
+        "свой": 19,
     }
 
 

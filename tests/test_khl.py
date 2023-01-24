@@ -10,9 +10,11 @@ import pytest
 import tomli
 
 import khl
+from khl import text_to_codes
 
 tests_dir = Path(__file__).parent
 project_dir = tests_dir.parent
+test_frequency_dictionary_file = "example_frequency_dictionary.json"
 
 
 class TestMetadata:
@@ -977,7 +979,7 @@ def test_simplify_plus_lemmatize(source_text, expected_lemmas):
             False,
             False,
             None,
-            [24, 22, 4, 8, 20, 1, 12, 27, 13, 11, 23, 2, 1, 6, 1, 13, 12, 7, 1, 2],
+            [1, 16, 4, 7, 1, 15, 1, 9, 19, 10, 8, 1, 2, 1, 5, 1, 10, 9, 6, 1, 2],
         ),
         (
             khl.stop_words,
@@ -986,7 +988,7 @@ def test_simplify_plus_lemmatize(source_text, expected_lemmas):
             True,
             False,
             None,
-            [19, 8, 20, 1, 17, 16, 12, 13, 23, 2, 26, 13, 12, 7, 25, 2],
+            [14, 7, 1, 15, 12, 11, 9, 10, 1, 2, 18, 10, 9, 6, 17, 2],
         ),
         (
             None,
@@ -995,9 +997,9 @@ def test_simplify_plus_lemmatize(source_text, expected_lemmas):
             False,
             True,
             None,
-            [24, 22, 4, 8, 20, 12, 27, 13, 11, 23, 2, 6, 13, 12, 7, 2],
+            [16, 4, 7, 15, 9, 19, 10, 8, 2, 5, 10, 9, 6, 2],
         ),
-        (None, False, False, False, True, 5, [24, 22, 4, 8, 20]),
+        (None, False, False, False, True, 5, [16, 4, 7, 15, 9]),
         (
             khl.stop_words,
             False,
@@ -1005,7 +1007,7 @@ def test_simplify_plus_lemmatize(source_text, expected_lemmas):
             False,
             True,
             15,
-            [0, 0, 0, 19, 8, 20, 12, 13, 23, 2, 6, 13, 12, 7, 2],
+            [0, 0, 0, 0, 14, 7, 15, 9, 10, 2, 5, 10, 9, 6, 2],
         ),
     ],
 )
@@ -1023,7 +1025,7 @@ def test_e2e(
         «Динамо Мск» - «Спартак» 2:1 ОТ (1:0 0:1 0:0 1:0) Голы забили: Иванов, Петров, Сидоров.
     """
     lemmas_coder = khl.preprocess.get_lemmas_coder(
-        tests_dir / "frequency_dictionary_for_tests.json"
+        tests_dir / test_frequency_dictionary_file
     )
     assert (
         khl.text_to_codes(
@@ -1038,3 +1040,120 @@ def test_e2e(
         )
         == expected_codes
     )
+
+
+class TestUsagesFromReadme:
+    lemmas_coder = {
+        "": 0,  # placeholder
+        "???": 1,  # unknown
+        ".": 2,
+        "и": 3,
+        "в": 4,
+        "-": 5,
+        ":": 6,
+        "матч": 7,
+        "за": 8,
+        "забить": 9,
+        "гол": 10,
+        "per": 11,  # person entity
+        "org": 12,  # organization entity
+        "loc": 13,  # location entity
+        "date": 14,  # date entity
+        "против": 15,
+        "год": 16,
+        "pers": 17,  # few persons entity
+        "orgs": 18,  # few organizations entity
+        "свой": 19,
+    }
+    text = """
+        1 апреля 2023 года в Москве в матче ⅛ финала против „Спартака” Иван Иванов забил свой 100—й гол за карьеру.
+        «Динамо Мск» - «Спартак» 2:1 ОТ (1:0 0:1 0:0 1:0) Голы забили: Иванов, Петров и Сидоров.
+    """
+    expected_codes = [
+        0,
+        0,
+        0,
+        0,
+        0,
+        14,
+        13,
+        7,
+        15,
+        12,
+        11,
+        9,
+        10,
+        2,
+        18,
+        10,
+        9,
+        6,
+        17,
+        2,
+    ]
+    expected_unified_text = (
+        "1 апреля 2023 года в Москве в матче 1/8 финала против 'Спартака' "
+        "Иван Иванов забил свой 100-й гол за карьеру. 'Динамо Мск' - 'Спартак' "
+        "2:1 ОТ (1:0 0:1 0:0 1:0) Голы забили: Иванов, Петров и Сидоров."
+    )
+    expected_simplified_text = (
+        "date в loc в матче финала против org per забил свой гол за карьеру. "
+        "org org Голы забили: per per и per."
+    )
+    expected_lemmas = [
+        "date",
+        "loc",
+        "матч",
+        "финал",
+        "против",
+        "org",
+        "per",
+        "забить",
+        "гол",
+        "карьера",
+        ".",
+        "orgs",
+        "гол",
+        "забить",
+        ":",
+        "pers",
+        ".",
+    ]
+
+    def test_basic_usage_from_readme(self):
+        codes = text_to_codes(
+            text=self.text,
+            lemmas_coder=self.lemmas_coder,
+            stop_words_=["в", "за", "и", "свой"],  # stop words to drop
+            replace_ners_=True,  # replace named entities ("Иван Иванов" -> "per", "Спартак" -> "org", "Москва" -> "loc")
+            replace_dates_=True,  # replace dates ("1 апреля 2023 года" -> "date")
+            replace_penalties_=True,  # replace penalties ("5+20" -> "pen")
+            exclude_unknown=True,  # drop lemma that not presented in lemmas_coder
+            max_len=20,  # get sequence of codes of length 15
+        )
+        assert codes == self.expected_codes
+
+    def test_lower_level_usage(self):
+        lemmas_coder = khl.preprocess.get_lemmas_coder(
+            tests_dir / test_frequency_dictionary_file
+        )
+        unified_text = khl.utils.unify_text(self.text)
+        simplified_text = khl.utils.simplify_text(
+            text=unified_text,
+            replace_ners_=True,
+            replace_dates_=True,
+            replace_penalties_=True,
+        )
+        lemmas = khl.preprocess.lemmatize(
+            text=simplified_text, stop_words_=khl.stop_words
+        )
+        codes = khl.preprocess.lemmas_to_codes(
+            lemmas=lemmas,
+            lemmas_coder=lemmas_coder,
+            exclude_unknown=True,
+            max_len=20,
+        )
+        assert unified_text == self.expected_unified_text
+        assert simplified_text == self.expected_simplified_text
+        assert lemmas == self.expected_lemmas
+        assert codes == self.expected_codes
