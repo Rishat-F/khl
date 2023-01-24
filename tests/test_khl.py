@@ -1119,6 +1119,28 @@ class TestUsagesFromReadme:
         "pers",
         ".",
     ]
+    expected_lemmas_20 = [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "date",
+        "loc",
+        "матч",
+        "против",
+        "org",
+        "per",
+        "забить",
+        "гол",
+        ".",
+        "orgs",
+        "гол",
+        "забить",
+        ":",
+        "pers",
+        ".",
+    ]
 
     def test_basic_usage_from_readme(self):
         codes = text_to_codes(
@@ -1153,7 +1175,11 @@ class TestUsagesFromReadme:
             exclude_unknown=True,
             max_len=20,
         )
+        lemmas_20 = khl.preprocess.codes_to_lemmas(
+            codes=codes, lemmas_coder=lemmas_coder
+        )
         assert unified_text == self.expected_unified_text
         assert simplified_text == self.expected_simplified_text
         assert lemmas == self.expected_lemmas
         assert codes == self.expected_codes
+        assert lemmas_20 == self.expected_lemmas_20
