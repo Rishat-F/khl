@@ -1,11 +1,12 @@
 [tool.poetry]
 name = "khl"
-version = "0.1.0"
+version = "1.0.0"
 description = "Preparing russian hockey news for machine learning"
 readme = "README.md"
 license = "MIT"
 authors = ["Rishat Fayzullin <nilluziaf@gmail.com>"]
 repository = "https://github.com/Rishat-F/khl"
+keywords = ["khl", "news", "nlp", "preprocessing"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
