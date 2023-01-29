@@ -155,8 +155,10 @@ codes = preprocess.lemmas_to_codes(
 # [0, 0, 0, 0, 0, 14, 13, 7, 15, 12, 11, 9, 10, 2, 18, 10, 9, 6, 17, 2]
 ```
 
-#### 8. Transform to lemmas (just to look what lemmas are presented in codes sequence)
+#### 8. Transform to lemmas back (just to look which lemmas are presented in codes sequence)
 ```python
-lemmas = preprocess.codes_to_lemmas(codes=codes, lemmas_coder=lemmas_coder)
+print(
+    preprocess.codes_to_lemmas(codes=codes, lemmas_coder=lemmas_coder)
+)
 # ['', '', '', '', '', 'date', 'loc', 'матч', 'против', 'org', 'per', 'забить', 'гол', '.', 'orgs', 'гол', 'забить', ':', 'pers', '.']
 ```
