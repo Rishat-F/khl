@@ -99,7 +99,7 @@ Preferably it should be sorted in descending order of values.
 
 You could make and use your own frequency dictionary or download [this dictionary](https://github.com/Rishat-F/khl/blob/master/data/frequency_dictionary.json) created by myself.
 
-## Lower level usage
+## Lower level usage<a id="lower-level-usage"></a>
 
 #### 1. Make imports
 ```python
@@ -108,7 +108,7 @@ from khl import utils
 from khl import preprocess
 ```
 
-#### 2. Get lemmas coder
+#### 2. Get lemmas coder<a id="2-get-lemmas-coder"></a>
 ```python
 lemmas_coder = preprocess.get_lemmas_coder("example_frequency_dictionary.json")
 ```
