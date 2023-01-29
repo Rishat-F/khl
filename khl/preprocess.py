@@ -48,37 +48,37 @@ def _merge(text_list: List[Word], source_word: Ner, target_word: Word) -> List[W
     return merged_words_text_list
 
 
-def merge_pers(text_list: List[Word]) -> List[Word]:
+def _merge_pers(text_list: List[Word]) -> List[Word]:
     """['per', 'per', 'и', 'per', 'per'] -> ['pers', 'и', 'pers']."""
     return _merge(text_list=text_list, source_word="per", target_word="pers")
 
 
-def merge_orgs(text_list: List[Word]) -> List[Word]:
+def _merge_orgs(text_list: List[Word]) -> List[Word]:
     """['org', 'org', 'и', 'org', 'org'] -> ['orgs', 'и', 'orgs']."""
     return _merge(text_list=text_list, source_word="org", target_word="orgs")
 
 
-def merge_locs(text_list: List[Word]) -> List[Word]:
+def _merge_locs(text_list: List[Word]) -> List[Word]:
     """['loc', 'loc', 'и', 'loc', 'loc'] -> ['locs', 'и', 'locs']."""
     return _merge(text_list=text_list, source_word="loc", target_word="locs")
 
 
-def merge_dates(text_list: List[Word]) -> List[Word]:
+def _merge_dates(text_list: List[Word]) -> List[Word]:
     """['date', 'date', 'и', 'date', 'date'] -> ['dates', 'и', 'dates']."""
     return _merge(text_list=text_list, source_word="date", target_word="dates")
 
 
-def merge_pens(text_list: List[Word]) -> List[Word]:
+def _merge_pens(text_list: List[Word]) -> List[Word]:
     """['pen', 'pen', 'и', 'pen', 'pen'] -> ['pens', 'и', 'pens']."""
     return _merge(text_list=text_list, source_word="pen", target_word="pens")
 
 
-def merge_ners(text_list: List[Word]) -> List[Word]:
+def _merge_ners(text_list: List[Word]) -> List[Word]:
     """# noqa
     ['per', 'per', 'org', 'org', 'loc', 'loc', 'date', 'date', 'pen', 'pen']
     -> ['pers', 'orgs', 'locs', 'dates', 'pens']
     """
-    return merge_pers(merge_orgs(merge_locs(merge_dates(merge_pens(text_list)))))
+    return _merge_pers(_merge_orgs(_merge_locs(_merge_dates(_merge_pens(text_list)))))
 
 
 def _tokenize(text: str) -> List[DocToken]:
@@ -96,7 +96,7 @@ def _tokenize(text: str) -> List[DocToken]:
     return tokens
 
 
-def merge_lemmas(lemmas: List[Lemma]) -> List[Lemma]:
+def _merge_lemmas(lemmas: List[Lemma]) -> List[Lemma]:
     """
     Схлопывание одинаковых соседних лемм.
 
@@ -143,10 +143,10 @@ def lemmatize(text: str, stop_words_: Optional[List[Lemma]]) -> List[Lemma]:
             for token in text_tokens
             if (fixed_lemma := fix_lemma(token.lemma)) not in stop_words_
         ]
-    return merge_lemmas(merge_ners(text_lemmas))
+    return _merge_lemmas(_merge_ners(text_lemmas))
 
 
-def merge_codes(codes: List[Code]) -> List[Code]:
+def _merge_codes(codes: List[Code]) -> List[Code]:
     """
     Схлопывание одинаковых соседних кодов.
 
@@ -177,7 +177,7 @@ def lemmas_to_codes(
             codes.append(lemmas_coder[lemma])
         else:
             continue
-    codes = merge_codes(codes)
+    codes = _merge_codes(codes)
     if max_len is None:
         return codes
     elif len(codes) >= max_len:  # pragma: no mutate

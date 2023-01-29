@@ -8,19 +8,19 @@ from khl import stop_words
 from khl.preprocess import (
     PLACEHOLDER,
     UNKNOWN,
+    _merge_codes,
+    _merge_dates,
+    _merge_lemmas,
+    _merge_locs,
+    _merge_ners,
+    _merge_orgs,
+    _merge_pens,
+    _merge_pers,
     codes_to_lemmas,
     fix_lemma,
     get_lemmas_coder,
     lemmas_to_codes,
     lemmatize,
-    merge_codes,
-    merge_dates,
-    merge_lemmas,
-    merge_locs,
-    merge_ners,
-    merge_orgs,
-    merge_pens,
-    merge_pers,
 )
 
 tests_dir = Path(__file__).parent
@@ -44,7 +44,7 @@ test_frequency_dictionary_file = "example_frequency_dictionary.json"
     ],
 )
 def test_merge_pers(text_list, expected_merged_text_list):
-    assert merge_pers(text_list) == expected_merged_text_list
+    assert _merge_pers(text_list) == expected_merged_text_list
 
 
 @pytest.mark.parametrize(
@@ -64,7 +64,7 @@ def test_merge_pers(text_list, expected_merged_text_list):
     ],
 )
 def test_merge_orgs(text_list, expected_merged_text_list):
-    assert merge_orgs(text_list) == expected_merged_text_list
+    assert _merge_orgs(text_list) == expected_merged_text_list
 
 
 @pytest.mark.parametrize(
@@ -84,7 +84,7 @@ def test_merge_orgs(text_list, expected_merged_text_list):
     ],
 )
 def test_merge_locs(text_list, expected_merged_text_list):
-    assert merge_locs(text_list) == expected_merged_text_list
+    assert _merge_locs(text_list) == expected_merged_text_list
 
 
 @pytest.mark.parametrize(
@@ -104,7 +104,7 @@ def test_merge_locs(text_list, expected_merged_text_list):
     ],
 )
 def test_merge_dates(text_list, expected_merged_text_list):
-    assert merge_dates(text_list) == expected_merged_text_list
+    assert _merge_dates(text_list) == expected_merged_text_list
 
 
 @pytest.mark.parametrize(
@@ -124,7 +124,7 @@ def test_merge_dates(text_list, expected_merged_text_list):
     ],
 )
 def test_merge_pens(text_list, expected_merged_text_list):
-    assert merge_pens(text_list) == expected_merged_text_list
+    assert _merge_pens(text_list) == expected_merged_text_list
 
 
 @pytest.mark.parametrize(
@@ -137,7 +137,7 @@ def test_merge_pens(text_list, expected_merged_text_list):
     ],
 )
 def test_merge_ners(text_list, expected_merged_text_list):
-    assert merge_ners(text_list) == expected_merged_text_list
+    assert _merge_ners(text_list) == expected_merged_text_list
 
 
 @pytest.mark.parametrize(
@@ -167,7 +167,7 @@ def test_fix_lemma(source_lemma, expected_lemma):
     ],
 )
 def test_merge_lemmas(source_lemmas, expected_lemmas):
-    assert merge_lemmas(source_lemmas) == expected_lemmas
+    assert _merge_lemmas(source_lemmas) == expected_lemmas
 
 
 @pytest.mark.parametrize(
@@ -266,7 +266,7 @@ def test_lemmatize(source_text, stop_words_, expected_lemmas):
     ],
 )
 def test_merge_codes(source_codes, expected_codes):
-    assert merge_codes(source_codes) == expected_codes
+    assert _merge_codes(source_codes) == expected_codes
 
 
 @pytest.mark.parametrize(
