@@ -1,4 +1,6 @@
-# khl - no water only cool ice
+![Khl Logo](https://raw.githubusercontent.com/Rishat-F/khl/master/data/logo.png)
+
+<h1 align="center">No Water - Ice Only</h1>
 
 Preparing russian hockey news for machine learning.
 
