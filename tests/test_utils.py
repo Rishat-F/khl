@@ -1344,6 +1344,14 @@ def test_delete_ending_colon_dash(source_text, expected_text):
             False,
             False,
         ),
+        pytest.param(
+            "Решения СДК по матчу Металлург - Барыс",
+            "Решения сдк по матчу org org",
+            True,
+            True,
+            True,
+            marks=[pytest.mark.xfail(reason="Bug #4 not fixed yet"), pytest.mark.bug_4]
+        ),
     ],
 )
 def test_simplify_text(

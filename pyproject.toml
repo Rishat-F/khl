@@ -61,4 +61,5 @@ tests_dir = "tests/"
 [tool.pytest.ini_options]
 markers = [
     "bug_1: test for bug_1",
+    "bug_4: test for bug_4",
 ]
