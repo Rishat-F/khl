@@ -115,7 +115,7 @@ def replace_penalty(text: str) -> str:
 
 def lowercase_sdk(text: str) -> str:
     """
-    "СДК" -> "сдк"
+    "СДК" -> "сдк".
 
     Нужно для того, того natasha не идентифицировала аббревиатуру "СДК" как
     название организации, и данная аббревиатура не заменялась на "org",
@@ -584,9 +584,9 @@ def delete_ending_colon_dash(text: str) -> str:
 
 def simplify_text(
     text: str,
-    replace_ners_: bool,
-    replace_dates_: bool,
-    replace_penalties_: bool,
+    replace_ners_: bool = True,
+    replace_dates_: bool = True,
+    replace_penalties_: bool = True,
 ) -> str:
     """
     Упрощение текста хоккейной новости.

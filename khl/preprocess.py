@@ -158,7 +158,7 @@ def _merge_codes(codes: List[Code]) -> List[Code]:
 def lemmas_to_codes(
     lemmas: List[Lemma],
     lemmas_coder: Dict[Lemma, Code],
-    exclude_unknown: bool,
+    exclude_unknown: bool = True,
     max_len: Optional[int] = None,
 ) -> List[Code]:
     """
