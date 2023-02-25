@@ -298,6 +298,7 @@ def test_get_lemmas_coder(file_path):
         "pers": 17,
         "orgs": 18,
         "свой": 19,
+        "pen": 20,
     }
 
 
