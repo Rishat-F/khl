@@ -330,6 +330,10 @@ class TestLemmasCodes:
             == expected_codes
         )
 
+    def test_lemmas_to_codes_with_default_params(self):
+        expected_codes = [6, 3, 4, 5, 2]
+        assert lemmas_to_codes(self.lemmas, self.lemmas_coder) == expected_codes
+
     @pytest.mark.parametrize(
         "codes,expected_lemmas",
         [

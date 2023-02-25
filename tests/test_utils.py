@@ -1407,3 +1407,14 @@ def test_simplify_text(
         )
         == expected_text
     )
+
+
+def test_simplify_text_with_default_params():
+    source_text = (
+        "21 января Шипачев и Зарипов в Москве забили много голов 'Спартаку', "
+        "а Сергей Широков получил 5+20 за грубость"
+    )
+    expected_text = (
+        "date per и per в loc забили много голов org а per получил pen за грубость"
+    )
+    assert simplify_text(source_text) == expected_text

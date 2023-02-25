@@ -12,10 +12,10 @@ def text_to_codes(
     text: str,
     lemmas_coder: Dict[preprocess.Lemma, preprocess.Code],
     stop_words_: Optional[List[preprocess.Lemma]],
-    replace_ners_: bool,
-    replace_dates_: bool,
-    replace_penalties_: bool,
-    exclude_unknown: bool,
+    replace_ners_: bool = True,
+    replace_dates_: bool = True,
+    replace_penalties_: bool = True,
+    exclude_unknown: bool = True,
     max_len: Optional[int] = None,
 ) -> List[preprocess.Code]:
     """
