@@ -611,12 +611,12 @@ def simplify_text(
       18. Удаляем годы рождения
       19. Корректирум 'Иванов-Петров-Сидоров' -> 'Иванов - Петров - Сидоров'
       20. Корректируем ' -Иванов' -> ' - Иванов', 'Иванов- ' -> 'Иванов - '
-      21. Заменяем ner'ы (если необходимо)
-      22. Заменяем даты (если необходимо)
-      23. Заменяем удаления (если необходимо)
-      24. Удаляем пометки годов
-      25. Костыльная замена названий чего-то в кавычках на org
-      26. Замена прописанных названий лиг и команд на org
+      21. Замена прописанных названий лиг и команд на org (если необходимо)
+      22. Заменяем ner'ы (если необходимо)
+      23. Заменяем даты (если необходимо)
+      24. Заменяем удаления (если необходимо)
+      25. Удаляем пометки годов
+      26. Костыльная замена названий чего-то в кавычках на org
       27. Разделяем слипшиеся ner'ы
       28. Удаляем ссылки
       29. Удаляем кавычки с одним символом внутри
@@ -660,6 +660,7 @@ def simplify_text(
     text = fix_surname_dash_surname_dash_surname(text)
     text = fix_dash_word(text)
     if replace_ners_:
+        text = replace_concrete_orgs(text)
         text = replace_ners(text)
     if replace_dates_:
         text = replace_dates(text)
@@ -668,7 +669,6 @@ def simplify_text(
     text = delete_year_city_mark(text)
     if replace_ners_:
         text = handwritten_replace_orgs(text)
-        text = replace_concrete_orgs(text)
     text = split_ners(text)
     text = delete_urls(text)
     text = delete_quotes_with_one_symbol(text)
