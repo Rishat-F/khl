@@ -37,6 +37,7 @@ from khl.utils import (
     handwritten_replace_orgs,
     latin_c_to_cirillic,
     leave_only_significant_symbols,
+    lowercase_sdk,
     lowercase_shaiba_word,
     merge_dashes,
     merge_spaces,
@@ -372,6 +373,20 @@ def test_leave_only_significant_symbols(source_text, expected_text):
 )
 def test_replace_exclamation_mark_with_dot(source_text, expected_text):
     assert replace_exclamation_mark_with_dot(source_text) == expected_text
+
+
+@pytest.mark.parametrize(
+    "source_text,expected_text",
+    [
+        ("Текст", "Текст"),
+        ("сдк", "сдк"),
+        ("СДК", "сдк"),
+        ("Решение Сдк по эпизоду с игроком", "Решение сдк по эпизоду с игроком"),
+        ("СДК дисквалифицировал защитника", "сдк дисквалифицировал защитника"),
+    ],
+)
+def test_lowercase_sdk(source_text, expected_text):
+    assert lowercase_sdk(source_text) == expected_text
 
 
 @pytest.mark.parametrize(
@@ -1350,7 +1365,7 @@ def test_delete_ending_colon_dash(source_text, expected_text):
             True,
             True,
             True,
-            marks=[pytest.mark.xfail(reason="Bug #4 not fixed yet"), pytest.mark.bug_4]
+            marks=pytest.mark.bug_4,
         ),
     ],
 )
