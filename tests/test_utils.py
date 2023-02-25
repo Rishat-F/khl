@@ -1235,6 +1235,20 @@ def test_fix_org_loc(source_text, expected_text):
             "Трактор Traktor ХК Сочи HC Sochi ЦСКА CSKA",
             " ".join(["org"] * 24 * 2),
         ),
+        pytest.param(
+            "'Автомобилист' отправился на выезд.",
+            "org отправился на выезд.",
+            marks=[pytest.mark.xfail(reason="Bug #6 not fixed yet"), pytest.mark.bug_6],
+        ),
+        (
+            "Команда возобновляет матчи KHL'а.",
+            "Команда возобновляет матчи org.",
+        ),
+        pytest.param(
+            "'Автомобилисту'предстоит три матча в гостях.",
+            "org предстоит три матча в гостях.",
+            marks=[pytest.mark.xfail(reason="Bug #6 not fixed yet"), pytest.mark.bug_6],
+        ),
     ],
 )
 def test_replace_concrete_orgs(source_text, expected_text):
@@ -1366,6 +1380,14 @@ def test_delete_ending_colon_dash(source_text, expected_text):
             True,
             True,
             marks=pytest.mark.bug_4,
+        ),
+        pytest.param(
+            "'Динамо' Рига против 'Динамо' Москва",
+            "org против org",
+            True,
+            True,
+            True,
+            marks=[pytest.mark.xfail(reason="Bug #6 not fixed yet"), pytest.mark.bug_6],
         ),
     ],
 )
