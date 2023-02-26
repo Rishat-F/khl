@@ -1409,12 +1409,50 @@ def test_simplify_text(
     )
 
 
-def test_simplify_text_with_default_params():
-    source_text = (
-        "21 января Шипачев и Зарипов в Москве забили много голов 'Спартаку', "
-        "а Сергей Широков получил 5+20 за грубость"
-    )
-    expected_text = (
-        "date per и per в loc забили много голов org а per получил pen за грубость"
-    )
+@pytest.mark.parametrize(
+    "source_text,expected_text",
+    [
+        (
+            "21 января Шипачев и Зарипов в Москве забили много голов 'Спартаку', "
+            "а Сергей Широков получил 5+20 за грубость",
+            "date per и per в loc забили много голов org а per получил pen за грубость",
+        ),
+        pytest.param(
+            "PRO Тигриц",
+            "PRO Тигриц",
+            marks=[pytest.mark.xfail(reason="Bug #14 not fixed"), pytest.mark.bug_14],
+        ),
+        pytest.param(
+            "Ахиллесова пята",
+            "Ахиллесова пята",
+            marks=[pytest.mark.xfail(reason="Bug #14 not fixed"), pytest.mark.bug_14],
+        ),
+        pytest.param(
+            "Уральская проверка",
+            "Уральская проверка",
+            marks=[pytest.mark.xfail(reason="Bug #14 not fixed"), pytest.mark.bug_14],
+        ),
+        pytest.param(
+            "Уступаем 'Сибири'",
+            "Уступаем org",
+            marks=[pytest.mark.xfail(reason="Bug #14 not fixed"), pytest.mark.bug_14],
+        ),
+        pytest.param(
+            "Побеждаем рижское 'Динамо'",
+            "Побеждаем рижское org",
+            marks=[pytest.mark.xfail(reason="Bug #14 not fixed"), pytest.mark.bug_14],
+        ),
+        pytest.param(
+            "Состав 'Спартака'",
+            "Состав org",
+            marks=[pytest.mark.xfail(reason="Bug #14 not fixed"), pytest.mark.bug_14],
+        ),
+        pytest.param(
+            "Ударники хоккейного труда",
+            "Ударники хоккейного труда",
+            marks=[pytest.mark.xfail(reason="Bug #14 not fixed"), pytest.mark.bug_14],
+        ),
+    ],
+)
+def test_simplify_text_with_default_params(source_text, expected_text):
     assert simplify_text(source_text) == expected_text
