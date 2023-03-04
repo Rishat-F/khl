@@ -79,7 +79,7 @@ class TestMetadata:
         pytest.param(
             "'Динамо' Рига против 'Динамо' Москва",
             ["org", "против", "org"],
-            marks=[pytest.mark.xfail(reason="Bug #6 not fixed yet"), pytest.mark.bug_6],
+            marks=[pytest.mark.bug_6],
         ),
         ("Матч 'Спартак'Москва - 'ЦСКА'-Москва", ["матч", "orgs"]),
         ("Матч 'Спартак' Москва - 'ЦСКА'-Москва", ["матч", "orgs"]),

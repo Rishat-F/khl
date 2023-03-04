@@ -624,12 +624,12 @@ def simplify_text(
       19. Корректирум 'Иванов-Петров-Сидоров' -> 'Иванов - Петров - Сидоров'
       20. Корректируем ' -Иванов' -> ' - Иванов', 'Иванов- ' -> 'Иванов - '
       21. Преобразуем 'СДК' -> 'сдк'
-      22. Замена прописанных названий лиг и команд на org (если необходимо)
-      23. Заменяем ner'ы (если необходимо)
-      24. Заменяем даты (если необходимо)
-      25. Заменяем удаления (если необходимо)
-      26. Удаляем пометки годов
-      27. Костыльная замена названий чего-то в кавычках на org
+      22. Заменяем ner'ы (если необходимо)
+      23. Заменяем даты (если необходимо)
+      24. Заменяем удаления (если необходимо)
+      25. Удаляем пометки годов
+      26. Замена прописанных названий лиг и команд на org (если необходимо)
+      27. Костыльная замена названий чего-то в кавычках на org (если необходимо)
       28. Разделяем слипшиеся ner'ы
       29. Удаляем ссылки
       30. Удаляем кавычки с одним символом внутри
@@ -674,7 +674,6 @@ def simplify_text(
     text = fix_dash_word(text)
     text = lowercase_sdk(text)
     if replace_ners_:
-        text = replace_concrete_orgs(text)
         text = replace_ners(text)
     if replace_dates_:
         text = replace_dates(text)
@@ -682,6 +681,7 @@ def simplify_text(
         text = replace_penalty(text)
     text = delete_year_city_mark(text)
     if replace_ners_:
+        text = replace_concrete_orgs(text)
         text = handwritten_replace_orgs(text)
     text = split_ners(text)
     text = delete_urls(text)

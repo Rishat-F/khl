@@ -1395,7 +1395,7 @@ def test_delete_ending_colon_dash(source_text, expected_text):
             True,
             True,
             True,
-            marks=[pytest.mark.xfail(reason="Bug #6 not fixed yet"), pytest.mark.bug_6],
+            marks=[pytest.mark.bug_6],
         ),
         (
             "'Динамо-Москва' - 'Динамо-Минск': составы команд.",
@@ -1450,17 +1450,17 @@ def test_simplify_text(
         pytest.param(
             "Уступаем 'Сибири'",
             "Уступаем org",
-            marks=[pytest.mark.xfail(reason="Bug #14 not fixed"), pytest.mark.bug_14],
+            marks=[pytest.mark.bug_14],
         ),
         pytest.param(
             "Побеждаем рижское 'Динамо'",
             "Побеждаем рижское org",
-            marks=[pytest.mark.xfail(reason="Bug #14 not fixed"), pytest.mark.bug_14],
+            marks=[pytest.mark.bug_14],
         ),
         pytest.param(
             "Состав 'Спартака'",
             "Состав org",
-            marks=[pytest.mark.xfail(reason="Bug #14 not fixed"), pytest.mark.bug_14],
+            marks=[pytest.mark.bug_14],
         ),
         pytest.param(
             "Ударники хоккейного труда",
