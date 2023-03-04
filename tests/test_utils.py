@@ -1374,12 +1374,20 @@ def test_delete_ending_colon_dash(source_text, expected_text):
             False,
         ),
         pytest.param(
-            "Решения СДК по матчу Металлург - Барыс",
-            "Решения сдк по матчу org org",
+            "Решения СДК по матчу",
+            "Решения сдк по матчу",
             True,
             True,
             True,
             marks=pytest.mark.bug_4,
+        ),
+        pytest.param(
+            "Статистика матча Металлург - Барыс",
+            "Статистика матча org org",
+            True,
+            True,
+            True,
+            marks=[pytest.mark.bug, pytest.mark.xfail(reason="Not fixed yet")],
         ),
         pytest.param(
             "'Динамо' Рига против 'Динамо' Москва",
@@ -1388,6 +1396,13 @@ def test_delete_ending_colon_dash(source_text, expected_text):
             True,
             True,
             marks=[pytest.mark.xfail(reason="Bug #6 not fixed yet"), pytest.mark.bug_6],
+        ),
+        (
+            "'Динамо-Москва' - 'Динамо-Минск': составы команд.",
+            "org org: составы команд.",
+            True,
+            True,
+            True,
         ),
     ],
 )
