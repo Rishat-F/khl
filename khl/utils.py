@@ -203,6 +203,11 @@ def fix_question_marks(text: str) -> str:
     return re.sub(r"\s*\?*\-*(?:\s*\-*\s*\?)+", "?", text)
 
 
+def fix_colons(text: str) -> str:
+    """Корректирование двоеточий ' :' -> ':'."""
+    return re.sub(r"\s+\:", ":", text)
+
+
 def generalize_top(text: str) -> str:
     """
     Обобщение ТОП'ов.
@@ -651,6 +656,7 @@ def simplify_text(
       45. Корректируем '?..' -> '?'
       46. Корректируем '..?' -> '?'
       47. Удаляем тире и двоеточия в конце текста (rstrip)
+      48. Корректируем ' :' -> ':'
     """
     text = delete_parentheses_content(text)
     text = replace_tak_kak(text)
@@ -703,4 +709,5 @@ def simplify_text(
     text = fix_question_dot(text)
     text = fix_dot_question(text)
     text = delete_ending_colon_dash(text)
+    text = fix_colons(text)
     return merge_spaces(text).strip()

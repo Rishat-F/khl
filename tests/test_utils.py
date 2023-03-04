@@ -23,6 +23,7 @@ from khl.utils import (
     delete_year_city_mark,
     fix_b_o_lshii,
     fix_cirillic_c_in_english_words,
+    fix_colons,
     fix_covid,
     fix_dash_word,
     fix_dot_question,
@@ -1270,6 +1271,19 @@ def test_delete_ending_colon_dash(source_text, expected_text):
 
 
 @pytest.mark.parametrize(
+    "source_text,expected_text",
+    [
+        ("Текст", "Текст"),
+        ("Текст: текст", "Текст: текст"),
+        ("Состав команды : ...", "Состав команды: ..."),
+        ("Состав команды\t  \n: ...", "Состав команды: ..."),
+    ],
+)
+def test_fix_colons(source_text, expected_text):
+    assert fix_colons(source_text) == expected_text
+
+
+@pytest.mark.parametrize(
     "source_text,expected_text,replace_ners_,replace_dates_,replace_penalties_",
     [
         (
@@ -1466,6 +1480,10 @@ def test_simplify_text(
             "Ударники хоккейного труда",
             "Ударники хоккейного труда",
             marks=[pytest.mark.xfail(reason="Bug #14 not fixed"), pytest.mark.bug_14],
+        ),
+        (
+            "Цитата дня : 'Пахать надо'",
+            "Цитата дня: Пахать надо",
         ),
     ],
 )
