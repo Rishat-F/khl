@@ -12,6 +12,7 @@ from typing import Dict, List, Literal, Optional, Union
 from natasha import Doc, NewsMorphTagger
 from natasha.doc import DocToken
 
+from khl.stop_words import stop_words
 from khl.utils import emb, morph_vocab, segmenter
 from khl.wrong_lemmas import fixed_lemmas
 
@@ -117,7 +118,9 @@ def fix_lemma(lemma: Lemma) -> Lemma:
     return fixed_lemmas.get(lemma, lemma)
 
 
-def lemmatize(text: str, stop_words_: Optional[List[Lemma]]) -> List[Lemma]:
+def lemmatize(
+    text: str, stop_words_: Optional[List[Lemma]] = stop_words
+) -> List[Lemma]:
     """
     Разбивка текста на леммы.
 
