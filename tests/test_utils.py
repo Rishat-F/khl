@@ -426,9 +426,9 @@ def test_lowercase_shaiba_word(source_text, expected_text):
 @pytest.mark.parametrize(
     "source_text,expected_text",
     [
-        ("ТОП-10 топ-5 TOP-3 top-100", "ТОП ТОП ТОП ТОП"),
-        ("Попал в ТОП-10 сейвов", "Попал в ТОП сейвов"),
-        ("Годовой TOP-3 сейвов", "Годовой ТОП сейвов"),
+        ("ТОП-10 топ-5 TOP-3 top-100", "топ топ топ топ"),
+        ("Попал в ТОП-10 сейвов", "Попал в топ сейвов"),
+        ("Годовой TOP-3 сейвов", "Годовой топ сейвов"),
     ],
 )
 def test_generalize_top(source_text, expected_text):
@@ -1534,6 +1534,11 @@ def test_simplify_text(
         (
             "Спортивно-дисциплинарный комитет выписал штраф",
             "сдк выписал штраф",
+        ),
+        pytest.param(
+            "Никита Беспалов вновь в ТОП-10",
+            "per вновь в топ",
+            marks=pytest.mark.bug_17,
         ),
     ],
 )

@@ -273,7 +273,7 @@ def generalize_top(text: str) -> str:
     'TOP-3', 'TOP-5', 'TOP-10' -> 'ТОП'
     """
     pattern = r"\b(ТОП|топ|TOP|top)-?\d+\b"
-    return re.sub(pattern, "ТОП", text)
+    return re.sub(pattern, "топ", text)
 
 
 def delete_serial_numbers(text: str) -> str:
@@ -687,15 +687,15 @@ def simplify_text(
       20. Корректируем ' -Иванов' -> ' - Иванов', 'Иванов- ' -> 'Иванов - '
       21. Преобразуем 'СДК' -> 'сдк'
       22. Преобразуем 'спортивно-дисциплинарный комитет' -> 'сдк'
-      23. Заменяем ner'ы (если необходимо)
-      24. Заменяем даты (если необходимо)
-      25. Заменяем удаления (если необходимо)
-      26. Удаляем пометки годов
-      27. Разделяем слипшиеся ner'ы
-      28. Удаляем ссылки
-      29. Удаляем кавычки с одним символом внутри
-      30. Удаляем английские слова, состоящие только из одной буквы
-      31. Обобщаем ТОП
+      23. Обобщаем ТОП
+      24. Заменяем ner'ы (если необходимо)
+      25. Заменяем даты (если необходимо)
+      26. Заменяем удаления (если необходимо)
+      27. Удаляем пометки годов
+      28. Разделяем слипшиеся ner'ы
+      29. Удаляем ссылки
+      30. Удаляем кавычки с одним символом внутри
+      31. Удаляем английские слова, состоящие только из одной буквы
       32. Удаляем числовые данные
       33. Удаляем порядковые числительные
       34. Удаляем формат игры ('5x5', '3 на 4' и т.д.)
@@ -736,6 +736,7 @@ def simplify_text(
     text = fix_dash_word(text)
     text = lowercase_sdk(text)
     text = replace_sdk(text)
+    text = generalize_top(text)
     if replace_ners_:
         text = replace_ners(text)
     if replace_dates_:
@@ -747,7 +748,6 @@ def simplify_text(
     text = delete_urls(text)
     text = delete_quotes_with_one_symbol(text)
     text = delete_one_symbol_english_words(text)
-    text = generalize_top(text)
     text = delete_numeric_data(text)
     text = delete_serial_numbers(text)
     text = delete_play_format(text)
