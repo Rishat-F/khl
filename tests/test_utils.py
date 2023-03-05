@@ -49,6 +49,7 @@ from khl.utils import (
     replace_exclamation_mark_with_dot,
     replace_ners,
     replace_penalty,
+    replace_sdk,
     replace_tak_kak,
     replace_to_est,
     replace_vs_with_dash,
@@ -390,6 +391,21 @@ def test_replace_exclamation_mark_with_dot(source_text, expected_text):
 )
 def test_lowercase_sdk(source_text, expected_text):
     assert lowercase_sdk(source_text) == expected_text
+
+
+@pytest.mark.parametrize(
+    "source_text,expected_text",
+    [
+        ("Текст", "Текст"),
+        ("сдк", "сдк"),
+        ("СДК", "СДК"),
+        ("Спортивно -дисциплинарный  комитет", "сдк"),
+        ("Сегодня СПОРТИВНО ДИСЦИПЛИНАРНЫЙ строг", "Сегодня сдк строг"),
+        ("Спортивным Дисциплинарным Комитетом принято решение", "сдк принято решение"),
+    ],
+)
+def test_replace_sdk(source_text, expected_text):
+    assert replace_sdk(source_text) == expected_text
 
 
 @pytest.mark.parametrize(
@@ -1514,6 +1530,10 @@ def test_simplify_text(
         (
             "Цитата дня : 'Пахать надо'",
             "Цитата дня: Пахать надо",
+        ),
+        (
+            "Спортивно-дисциплинарный комитет выписал штраф",
+            "сдк выписал штраф",
         ),
     ],
 )
