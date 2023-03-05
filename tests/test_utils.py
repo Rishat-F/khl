@@ -118,7 +118,7 @@ def test_unify_text(source_text, expected_text):
             "высших дивизионах российского хоккея. Зарипов обошёл предыдущего "
             "рекордсмена - Алексея Морозова - на счету которого 621 (266+355) "
             "очко за 'Ак Барс' в чемпионатах России и КХЛ.",
-            "per - лучший бомбардир 'Ак Барса' в новейшей истории. "
+            "per - лучший бомбардир org в новейшей истории. "
             "Капитан org per стал лучшим бомбардиром клуба в "
             "высших дивизионах российского хоккея. per обошёл предыдущего "
             "рекордсмена - per - на счету которого 621 (266+355) "
@@ -1479,17 +1479,17 @@ def test_simplify_text(
         pytest.param(
             "PRO Тигриц",
             "PRO Тигриц",
-            marks=[pytest.mark.xfail(reason="Bug #14 not fixed"), pytest.mark.bug_14],
+            marks=[pytest.mark.bug_14],
         ),
         pytest.param(
             "Ахиллесова пята",
             "Ахиллесова пята",
-            marks=[pytest.mark.xfail(reason="Bug #14 not fixed"), pytest.mark.bug_14],
+            marks=[pytest.mark.bug_14],
         ),
         pytest.param(
             "Уральская проверка",
             "Уральская проверка",
-            marks=[pytest.mark.xfail(reason="Bug #14 not fixed"), pytest.mark.bug_14],
+            marks=[pytest.mark.bug_14],
         ),
         pytest.param(
             "Уступаем 'Сибири'",
@@ -1509,7 +1509,7 @@ def test_simplify_text(
         pytest.param(
             "Ударники хоккейного труда",
             "Ударники хоккейного труда",
-            marks=[pytest.mark.xfail(reason="Bug #14 not fixed"), pytest.mark.bug_14],
+            marks=[pytest.mark.bug_14],
         ),
         (
             "Цитата дня : 'Пахать надо'",
