@@ -9,7 +9,7 @@
 
 
 import re
-from typing import List
+from typing import Callable, List
 
 from natasha import (
     DatesExtractor,
@@ -57,6 +57,53 @@ def _find_ners(text: str) -> List[Span]:
     return ners
 
 
+def _fix_quotes(text: str) -> str:
+    """Исправление дублирующихся ординарных кавычек "''" -> "'"."""
+    return re.sub(r"\'{2,}", "'", text)
+
+
+def _surround_with_quotes(match_object: re.Match) -> str:  # type: ignore
+    """Окружение кавычками."""
+    word: str = match_object.group(0)
+    return "'" + word + "'"
+
+
+def surround_concrete_orgs_with_quotes(text: str) -> str:
+    """
+    Оборачивание кавычками прописанных названий лиг и команд.
+
+    Чтобы natasha лучше распознавала ner'ы.
+    """
+    text = re.sub(teams_orgs_pattern, _surround_with_quotes, text)
+    return _fix_quotes(text)
+
+
+def delete_quotes_around_orgs(text: str) -> str:
+    """Удаление кавычек вокруг org."""
+    return re.sub(r"\'?org\'?", "org", text)
+
+
+def fix_bug_14(func: Callable[[str], str]) -> Callable[[str], str]:
+    """
+    Почему-то natasha ошибается на коротких названиях новостей.
+
+    Например, replace_ners("Уральская проверка") -> "org".
+    Данный декоратор - попытка исправить данное поведение,
+    путем добавления в конец текста восклицательного знака
+    перед тем как распознавать ner'ы, а потом удаление
+    данного добавленного в конец восклицательного знака.
+    """
+
+    def wrapper(text: str) -> str:
+        """Функция wrapper."""
+        text += "!"
+        text = func(text)
+        return re.sub(r"\!$", "", text)
+
+    return wrapper
+
+
+@fix_bug_14
 def replace_ners(text: str) -> str:
     """
     Заменяет именованные сущности на их тип.
@@ -65,10 +112,13 @@ def replace_ners(text: str) -> str:
     'Магнитогорск' -> 'loc'
     'Ак Барс'      -> 'org'
     """
+    text = surround_concrete_orgs_with_quotes(text)
     ners_spans = _find_ners(text)
     for ner_span in reversed(ners_spans):
         text = text[: ner_span.start] + ner_span.type.lower() + text[ner_span.stop :]
-    return text
+    text = replace_concrete_orgs(text)
+    text = handwritten_replace_orgs(text)
+    return delete_quotes_around_orgs(text)
 
 
 def _find_dates(text: str) -> List[NatashaMatch]:
@@ -201,6 +251,11 @@ def fix_question_marks(text: str) -> str:
     ' - ?' -> '?'
     """
     return re.sub(r"\s*\?*\-*(?:\s*\-*\s*\?)+", "?", text)
+
+
+def fix_colons(text: str) -> str:
+    """Корректирование двоеточий ' :' -> ':'."""
+    return re.sub(r"\s+\:", ":", text)
 
 
 def generalize_top(text: str) -> str:
@@ -624,33 +679,32 @@ def simplify_text(
       19. Корректирум 'Иванов-Петров-Сидоров' -> 'Иванов - Петров - Сидоров'
       20. Корректируем ' -Иванов' -> ' - Иванов', 'Иванов- ' -> 'Иванов - '
       21. Преобразуем 'СДК' -> 'сдк'
-      22. Замена прописанных названий лиг и команд на org (если необходимо)
-      23. Заменяем ner'ы (если необходимо)
-      24. Заменяем даты (если необходимо)
-      25. Заменяем удаления (если необходимо)
-      26. Удаляем пометки годов
-      27. Костыльная замена названий чего-то в кавычках на org
-      28. Разделяем слипшиеся ner'ы
-      29. Удаляем ссылки
-      30. Удаляем кавычки с одним символом внутри
-      31. Удаляем английские слова, состоящие только из одной буквы
-      32. Обобщаем ТОП
-      33. Удаляем числовые данные
-      34. Удаляем порядковые числительные
-      35. Удаляем формат игры ('5x5', '3 на 4' и т.д.)
-      36. Заменяем восклицательные знаки на точки
-      37. Оставляем только нужные символы
-      38. 'org loc' -> 'org'
-      39. Схлопываем пробелы
-      40. Схлопываем тире
-      41. Заменяем тире между ner'ами на пробел
+      22. Заменяем ner'ы (если необходимо)
+      23. Заменяем даты (если необходимо)
+      24. Заменяем удаления (если необходимо)
+      25. Удаляем пометки годов
+      26. Разделяем слипшиеся ner'ы
+      27. Удаляем ссылки
+      28. Удаляем кавычки с одним символом внутри
+      29. Удаляем английские слова, состоящие только из одной буквы
+      30. Обобщаем ТОП
+      31. Удаляем числовые данные
+      32. Удаляем порядковые числительные
+      33. Удаляем формат игры ('5x5', '3 на 4' и т.д.)
+      34. Заменяем восклицательные знаки на точки
+      35. Оставляем только нужные символы
+      36. 'org loc' -> 'org'
+      37. Схлопываем пробелы
+      38. Схлопываем тире
+      39. Заменяем тире между ner'ами на пробел
       ('этот шаг в редких случаях приводит к неправильному схлопыванию ner'ов)
-      42. Удаление тире в начале или в конце слова
-      43. Корректируем точки
-      44. Корректируем вопросительные знаки
-      45. Корректируем '?..' -> '?'
-      46. Корректируем '..?' -> '?'
-      47. Удаляем тире и двоеточия в конце текста (rstrip)
+      40. Удаление тире в начале или в конце слова
+      41. Корректируем точки
+      42. Корректируем вопросительные знаки
+      43. Корректируем '?..' -> '?'
+      44. Корректируем '..?' -> '?'
+      45. Удаляем тире и двоеточия в конце текста (rstrip)
+      46. Корректируем ' :' -> ':'
     """
     text = delete_parentheses_content(text)
     text = replace_tak_kak(text)
@@ -674,15 +728,12 @@ def simplify_text(
     text = fix_dash_word(text)
     text = lowercase_sdk(text)
     if replace_ners_:
-        text = replace_concrete_orgs(text)
         text = replace_ners(text)
     if replace_dates_:
         text = replace_dates(text)
     if replace_penalties_:
         text = replace_penalty(text)
     text = delete_year_city_mark(text)
-    if replace_ners_:
-        text = handwritten_replace_orgs(text)
     text = split_ners(text)
     text = delete_urls(text)
     text = delete_quotes_with_one_symbol(text)
@@ -703,4 +754,5 @@ def simplify_text(
     text = fix_question_dot(text)
     text = fix_dot_question(text)
     text = delete_ending_colon_dash(text)
+    text = fix_colons(text)
     return merge_spaces(text).strip()

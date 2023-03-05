@@ -16,6 +16,7 @@ from khl.utils import (
     delete_overtime_mark,
     delete_parentheses_content,
     delete_play_format,
+    delete_quotes_around_orgs,
     delete_quotes_with_one_symbol,
     delete_serial_numbers,
     delete_shutouts,
@@ -23,6 +24,7 @@ from khl.utils import (
     delete_year_city_mark,
     fix_b_o_lshii,
     fix_cirillic_c_in_english_words,
+    fix_colons,
     fix_covid,
     fix_dash_word,
     fix_dot_question,
@@ -52,6 +54,7 @@ from khl.utils import (
     replace_vs_with_dash,
     simplify_text,
     split_ners,
+    surround_concrete_orgs_with_quotes,
     unify_text,
 )
 
@@ -97,7 +100,7 @@ def test_unify_text(source_text, expected_text):
         ),
         (
             "Вниманию СМИ! Открытая тренировка 'Ак Барса'",
-            "Вниманию org! Открытая тренировка 'org'",
+            "Вниманию org! Открытая тренировка org",
         ),
         (
             "Гол Да Косты с передачи Галимова - лучший по итогам двух недель",
@@ -105,9 +108,9 @@ def test_unify_text(source_text, expected_text):
         ),
         (
             "Андрей Педан не сыграет против 'Спартака'",
-            "per не сыграет против 'org'",
+            "per не сыграет против org",
         ),
-        ("'Ак Барс' отправился в Уфу", "'org' отправился в loc"),
+        ("'Ак Барс' отправился в Уфу", "org отправился в loc"),
         ("Результаты матчей Хоккейной школы ЦСКА", "Результаты матчей org org"),
         (
             "Данис Зарипов - лучший бомбардир 'Ак Барса' в новейшей истории. "
@@ -115,11 +118,11 @@ def test_unify_text(source_text, expected_text):
             "высших дивизионах российского хоккея. Зарипов обошёл предыдущего "
             "рекордсмена - Алексея Морозова - на счету которого 621 (266+355) "
             "очко за 'Ак Барс' в чемпионатах России и КХЛ.",
-            "per - лучший бомбардир 'Ак Барса' в новейшей истории. "
-            "Капитан 'org' per стал лучшим бомбардиром клуба в "
+            "per - лучший бомбардир org в новейшей истории. "
+            "Капитан org per стал лучшим бомбардиром клуба в "
             "высших дивизионах российского хоккея. per обошёл предыдущего "
             "рекордсмена - per - на счету которого 621 (266+355) "
-            "очко за 'org' в чемпионатах loc и org.",
+            "очко за org в чемпионатах loc и org.",
         ),
     ],
 )
@@ -581,10 +584,10 @@ def test_delete_urls(source_text, expected_text):
         (
             "'Автомобилист' отправился на выезд. После перерыва на игры "
             "сборной наша команда возобновляет чемпионат с выездной серии. "
-            "'Автомобилисту'предстоит три матча в гостях",
+            "'Автомобилисту' предстоит три матча в гостях",
             "'org' отправился на выезд. После перерыва на игры "
             "сборной наша команда возобновляет чемпионат с выездной серии. "
-            "'org'предстоит три матча в гостях",
+            "'org' предстоит три матча в гостях",
         ),
     ],
 )
@@ -1237,17 +1240,17 @@ def test_fix_org_loc(source_text, expected_text):
         ),
         pytest.param(
             "'Автомобилист' отправился на выезд.",
-            "org отправился на выезд.",
-            marks=[pytest.mark.xfail(reason="Bug #6 not fixed yet"), pytest.mark.bug_6],
+            "'org' отправился на выезд.",
+            marks=[pytest.mark.bug_6],
         ),
         (
             "Команда возобновляет матчи KHL'а.",
             "Команда возобновляет матчи org.",
         ),
         pytest.param(
-            "'Автомобилисту'предстоит три матча в гостях.",
-            "org предстоит три матча в гостях.",
-            marks=[pytest.mark.xfail(reason="Bug #6 not fixed yet"), pytest.mark.bug_6],
+            "'Автомобилисту' предстоит три матча в гостях.",
+            "'org' предстоит три матча в гостях.",
+            marks=[pytest.mark.bug_6],
         ),
     ],
 )
@@ -1267,6 +1270,48 @@ def test_replace_concrete_orgs(source_text, expected_text):
 )
 def test_delete_ending_colon_dash(source_text, expected_text):
     assert delete_ending_colon_dash(source_text) == expected_text
+
+
+@pytest.mark.parametrize(
+    "source_text,expected_text",
+    [
+        ("Текст", "Текст"),
+        ("Текст: текст", "Текст: текст"),
+        ("Состав команды : ...", "Состав команды: ..."),
+        ("Состав команды\t  \n: ...", "Состав команды: ..."),
+    ],
+)
+def test_fix_colons(source_text, expected_text):
+    assert fix_colons(source_text) == expected_text
+
+
+@pytest.mark.parametrize(
+    "source_text,expected_text",
+    [
+        ("Текст", "Текст"),
+        ("Ак Барс", "'Ак Барс'"),
+        ("Команда 'Сочи' победила", "Команда 'Сочи' победила"),
+        ("Сыграем с Avangard'ом завтра", "Сыграем с 'Avangard'ом' завтра"),
+        ("Сегодня 'Сибирь' играет", "Сегодня 'Сибирь' играет"),
+    ],
+)
+def test_surround_concrete_orgs_with_quotes(source_text, expected_text):
+    assert surround_concrete_orgs_with_quotes(source_text) == expected_text
+
+
+@pytest.mark.parametrize(
+    "source_text,expected_text",
+    [
+        ("Текст", "Текст"),
+        ("'рыбка'", "'рыбка'"),
+        ("'Ак Барс'", "'Ак Барс'"),
+        ("Сыграем с Avangard'ом завтра", "Сыграем с Avangard'ом завтра"),
+        ("Команда 'org' победила", "Команда org победила"),
+        ("org' победил, 'org проиграл", "org победил, org проиграл"),
+    ],
+)
+def test_delete_quotes_around_orgs(source_text, expected_text):
+    assert delete_quotes_around_orgs(source_text) == expected_text
 
 
 @pytest.mark.parametrize(
@@ -1374,12 +1419,19 @@ def test_delete_ending_colon_dash(source_text, expected_text):
             False,
         ),
         pytest.param(
-            "Решения СДК по матчу Металлург - Барыс",
-            "Решения сдк по матчу org org",
+            "Решения СДК по матчу",
+            "Решения сдк по матчу",
             True,
             True,
             True,
             marks=pytest.mark.bug_4,
+        ),
+        (
+            "Статистика матча Металлург - Барыс",
+            "Статистика матча org org",
+            True,
+            True,
+            True,
         ),
         pytest.param(
             "'Динамо' Рига против 'Динамо' Москва",
@@ -1387,7 +1439,14 @@ def test_delete_ending_colon_dash(source_text, expected_text):
             True,
             True,
             True,
-            marks=[pytest.mark.xfail(reason="Bug #6 not fixed yet"), pytest.mark.bug_6],
+            marks=[pytest.mark.bug_6],
+        ),
+        (
+            "'Динамо-Москва' - 'Динамо-Минск': составы команд.",
+            "org org: составы команд.",
+            True,
+            True,
+            True,
         ),
     ],
 )
@@ -1409,12 +1468,54 @@ def test_simplify_text(
     )
 
 
-def test_simplify_text_with_default_params():
-    source_text = (
-        "21 января Шипачев и Зарипов в Москве забили много голов 'Спартаку', "
-        "а Сергей Широков получил 5+20 за грубость"
-    )
-    expected_text = (
-        "date per и per в loc забили много голов org а per получил pen за грубость"
-    )
+@pytest.mark.parametrize(
+    "source_text,expected_text",
+    [
+        (
+            "21 января Шипачев и Зарипов в Москве забили много голов 'Спартаку', "
+            "а Сергей Широков получил 5+20 за грубость",
+            "date per и per в loc забили много голов org а per получил pen за грубость",
+        ),
+        pytest.param(
+            "PRO Тигриц",
+            "PRO Тигриц",
+            marks=[pytest.mark.bug_14],
+        ),
+        pytest.param(
+            "Ахиллесова пята",
+            "Ахиллесова пята",
+            marks=[pytest.mark.bug_14],
+        ),
+        pytest.param(
+            "Уральская проверка",
+            "Уральская проверка",
+            marks=[pytest.mark.bug_14],
+        ),
+        pytest.param(
+            "Уступаем 'Сибири'",
+            "Уступаем org",
+            marks=[pytest.mark.bug_14],
+        ),
+        pytest.param(
+            "Побеждаем рижское 'Динамо'",
+            "Побеждаем рижское org",
+            marks=[pytest.mark.bug_14],
+        ),
+        pytest.param(
+            "Состав 'Спартака'",
+            "Состав org",
+            marks=[pytest.mark.bug_14],
+        ),
+        pytest.param(
+            "Ударники хоккейного труда",
+            "Ударники хоккейного труда",
+            marks=[pytest.mark.bug_14],
+        ),
+        (
+            "Цитата дня : 'Пахать надо'",
+            "Цитата дня: Пахать надо",
+        ),
+    ],
+)
+def test_simplify_text_with_default_params(source_text, expected_text):
     assert simplify_text(source_text) == expected_text
