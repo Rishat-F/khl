@@ -1535,6 +1535,11 @@ def test_simplify_text(
             "Спортивно-дисциплинарный комитет выписал штраф",
             "сдк выписал штраф",
         ),
+        pytest.param(
+            "Никита Беспалов вновь в ТОП-10",
+            "per вновь в топ",
+            marks=pytest.mark.bug_17,
+        ),
     ],
 )
 def test_simplify_text_with_default_params(source_text, expected_text):
