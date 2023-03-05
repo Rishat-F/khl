@@ -57,6 +57,32 @@ def _find_ners(text: str) -> List[Span]:
     return ners
 
 
+def _fix_quotes(text: str) -> str:
+    """Исправление дублирующихся ординарных кавычек "''" -> "'"."""
+    return re.sub(r"\'{2,}", "'", text)
+
+
+def _surround_with_quotes(match_object: re.Match) -> str:  # type: ignore
+    """Окружение кавычками."""
+    word: str = match_object.group(0)
+    return "'" + word + "'"
+
+
+def surround_concrete_orgs_with_quotes(text: str) -> str:
+    """
+    Оборачивание кавычками прописанных названий лиг и команд.
+
+    Чтобы natasha лучше распознавала ner'ы.
+    """
+    text = re.sub(teams_orgs_pattern, _surround_with_quotes, text)
+    return _fix_quotes(text)
+
+
+def delete_quotes_around_orgs(text: str) -> str:
+    """Удаление кавычек вокруг org."""
+    return re.sub(r"\'?org\'?", "org", text)
+
+
 def replace_ners(text: str) -> str:
     """
     Заменяет именованные сущности на их тип.
@@ -65,10 +91,11 @@ def replace_ners(text: str) -> str:
     'Магнитогорск' -> 'loc'
     'Ак Барс'      -> 'org'
     """
+    text = surround_concrete_orgs_with_quotes(text)
     ners_spans = _find_ners(text)
     for ner_span in reversed(ners_spans):
         text = text[: ner_span.start] + ner_span.type.lower() + text[ner_span.stop :]
-    return text
+    return delete_quotes_around_orgs(text)
 
 
 def _find_dates(text: str) -> List[NatashaMatch]:
