@@ -65,5 +65,5 @@ markers = [
     "bug_4: test for bug #4",
     "bug_5: test for bug #5",
     "bug_6: test for bug #6",
-    "bug_14: test for bug #6",
+    "bug_14: test for bug #14",
 ]

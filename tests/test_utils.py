@@ -1495,37 +1495,37 @@ def test_simplify_text(
         pytest.param(
             "PRO Тигриц",
             "PRO Тигриц",
-            marks=[pytest.mark.bug_14],
+            marks=pytest.mark.bug_14,
         ),
         pytest.param(
             "Ахиллесова пята",
             "Ахиллесова пята",
-            marks=[pytest.mark.bug_14],
+            marks=pytest.mark.bug_14,
         ),
         pytest.param(
             "Уральская проверка",
             "Уральская проверка",
-            marks=[pytest.mark.bug_14],
+            marks=pytest.mark.bug_14,
         ),
         pytest.param(
             "Уступаем 'Сибири'",
             "Уступаем org",
-            marks=[pytest.mark.bug_14],
+            marks=pytest.mark.bug_14,
         ),
         pytest.param(
             "Побеждаем рижское 'Динамо'",
             "Побеждаем рижское org",
-            marks=[pytest.mark.bug_14],
+            marks=pytest.mark.bug_14,
         ),
         pytest.param(
             "Состав 'Спартака'",
             "Состав org",
-            marks=[pytest.mark.bug_14],
+            marks=pytest.mark.bug_14,
         ),
         pytest.param(
             "Ударники хоккейного труда",
             "Ударники хоккейного труда",
-            marks=[pytest.mark.bug_14],
+            marks=pytest.mark.bug_14,
         ),
         (
             "Цитата дня : 'Пахать надо'",
