@@ -1082,11 +1082,10 @@ def test_e2e_with_default_params():
         В матче судьи выписали два удаления '5+20'.
     """
     expected_codes = [14, 7, 15, 12, 11, 9, 10, 2, 18, 10, 9, 6, 17, 2, 7, 20, 2]
-    stop_words_ = khl.stop_words
     lemmas_coder = khl.preprocess.get_lemmas_coder(
         tests_dir / test_frequency_dictionary_file
     )
-    assert khl.text_to_codes(text, lemmas_coder, stop_words_) == expected_codes
+    assert khl.text_to_codes(text, lemmas_coder) == expected_codes
 
 
 class TestUsagesFromReadme:

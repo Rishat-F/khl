@@ -11,7 +11,7 @@ from khl.stop_words import stop_words
 def text_to_codes(
     text: str,
     lemmas_coder: Dict[preprocess.Lemma, preprocess.Code],
-    stop_words_: Optional[List[preprocess.Lemma]],
+    stop_words_: Optional[List[preprocess.Lemma]] = stop_words,
     replace_ners_: bool = True,
     replace_dates_: bool = True,
     replace_penalties_: bool = True,
