@@ -1540,6 +1540,26 @@ def test_simplify_text(
             "per вновь в топ",
             marks=pytest.mark.bug_17,
         ),
+        pytest.param(
+            "Дедунов: забивать приятно",
+            "per: забивать приятно",
+            marks=pytest.mark.bug_20,
+        ),
+        pytest.param(
+            "М. Беляев: старались играть системно",
+            "per: старались играть системно",
+            marks=pytest.mark.bug_20,
+        ),
+        pytest.param(
+            "Жамнов - о судействе: вопросов никаких",
+            "per - о судействе: вопросов никаких",
+            marks=pytest.mark.bug_21,
+        ),
+        pytest.param(
+            "М. Беляев - об игре: старались играть системно",
+            "per - об игре: старались играть системно",
+            marks=pytest.mark.bug_21,
+        ),
     ],
 )
 def test_simplify_text_with_default_params(source_text, expected_text):
