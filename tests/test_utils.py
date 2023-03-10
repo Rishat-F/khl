@@ -37,6 +37,7 @@ from khl.utils import (
     fix_surname_dash_surname_dash_surname,
     generalize_top,
     handwritten_replace_orgs,
+    handwritten_replace_per,
     latin_c_to_cirillic,
     leave_only_significant_symbols,
     lowercase_sdk,
@@ -609,6 +610,37 @@ def test_delete_urls(source_text, expected_text):
 )
 def test_handwritten_replace_orgs(source_text, expected_text):
     assert handwritten_replace_orgs(source_text) == expected_text
+
+
+@pytest.mark.parametrize(
+    "source_text,expected_text",
+    [
+        ("Текст", "Текст"),
+        ("Текст текст", "Текст текст"),
+        ("Да-да, вы правы", "Да-да, вы правы"),
+        ("Андрей Николишин: заслужили победу", "Андрей Николишин: заслужили победу"),
+        ("Вадим Шипачев - о 100 голе: не знал", "Вадим Шипачев - о 100 голе: не знал"),
+        ("Тест: кто быстрее", "Тест: кто быстрее"),
+        ("Официально - о голе: офсайда нет", "Официально - о голе: офсайда нет"),
+        ("Источник: Иванов перейдет в Спартак", "Источник: Иванов перейдет в Спартак"),
+        ("Команда - как единый кулак", "Команда - как единый кулак"),
+        ("1. Иванов: 2 гола", "1. Иванов: 2 гола"),
+        ("Тарасов: серия до четырёх побед", "per: серия до четырёх побед"),
+        ("М. Беляев: старались играть системно", "per: старались играть системно"),
+        ("А.Разин: жалко отпускать такие матчи.", "per: жалко отпускать такие матчи."),
+        ("Жамнов - о судействе: вопросов нет", "per - о судействе: вопросов нет"),
+        (
+            "П. Дедунов - о своем голе: забивать всегда приятно",
+            "per - о своем голе: забивать всегда приятно",
+        ),
+        (
+            "Б.Хартли - о новичках: это хорошее усиление",
+            "per - о новичках: это хорошее усиление",
+        ),
+    ],
+)
+def test_handwritten_replace_per(source_text, expected_text):
+    assert handwritten_replace_per(source_text) == expected_text
 
 
 @pytest.mark.parametrize(
