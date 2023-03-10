@@ -123,6 +123,7 @@ def replace_ners(text: str) -> str:
 
 
 def _find_dates(text: str) -> List[NatashaMatch]:
+    """Нахождение дат."""
     dates_extractor = DatesExtractor(morph_vocab)
     return [match_ for match_ in dates_extractor(text)]
 
@@ -177,7 +178,7 @@ def lowercase_sdk(text: str) -> str:
 
 
 def replace_sdk(text: str) -> str:
-    """'спортивно-дисциплинарный' -> 'сдк'."""
+    """'спортивно-дисциплинарный комитет' -> 'сдк'."""
     pattern = r"спортивн[а-я]+[ -]*дисциплинарн[а-я]+(?:\s*комитет[а-я]*)?"
     result = re.sub(pattern, "сдк", text, flags=re.IGNORECASE)
     return result
@@ -454,7 +455,7 @@ def fix_english_dash_russian_words(text: str) -> str:
 
     'VIP-гость'      -> 'гость'
     'telegram-канал' -> 'канал'
-    'YouTube-видео'  -> 'канал'
+    'YouTube-видео'  -> 'видео'
     """
     pattern = r"\b[a-zA-Z]+-[а-яА-ЯёЁ]+\b"
     return re.sub(pattern, _leave_only_cirillic, text)
@@ -596,7 +597,7 @@ def fix_b_o_lshii(text: str) -> str:
 
 
 def merge_dashes(text: str) -> str:
-    """'Схлопывает' все соседние тире в один пробел."""
+    """'Схлопывает' все соседние тире в одно."""
     return re.sub(r"(?<=\s)-+(\s*-+)+(?=\s)|-{2,}", "-", text)
 
 
@@ -730,7 +731,6 @@ def simplify_text(
       38. Схлопываем пробелы
       39. Схлопываем тире
       40. Заменяем тире между ner'ами на пробел
-      ('этот шаг в редких случаях приводит к неправильному схлопыванию ner'ов)
       41. Удаление тире в начале или в конце слова
       42. Корректируем точки
       43. Корректируем вопросительные знаки
