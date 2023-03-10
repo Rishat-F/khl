@@ -118,6 +118,7 @@ def replace_ners(text: str) -> str:
         text = text[: ner_span.start] + ner_span.type.lower() + text[ner_span.stop :]
     text = replace_concrete_orgs(text)
     text = handwritten_replace_orgs(text)
+    text = handwritten_replace_per(text)
     return delete_quotes_around_orgs(text)
 
 
@@ -358,6 +359,30 @@ def handwritten_replace_orgs(text: str) -> str:
 def replace_concrete_orgs(text: str) -> str:
     """Замена прописанных названий лиг и команд на org."""
     return re.sub(teams_orgs_pattern, "org", text)
+
+
+def _handwritten_replace_per(match_object: re.Match) -> str:  # type: ignore
+    """Замена слова (слов) на per."""
+    match_: str = match_object.group(0)
+    exceptions = [
+        "Тест",
+        "Официально",
+        "Источник",
+        "Изнутри",
+        "Превью",
+        "Дерби",
+        "Супердерби",
+    ]
+    if match_ not in exceptions:
+        return "per"
+    else:
+        return match_
+
+
+def handwritten_replace_per(text: str) -> str:
+    """Костыльная замена фамилий в начале строки на per."""
+    pattern = r"^(?:[А-ЯЁ]\.\s*)?[А-ЯЁ][а-яё]+(?=:| - о)"
+    return re.sub(pattern, _handwritten_replace_per, text)
 
 
 def fix_covid(text: str) -> str:
