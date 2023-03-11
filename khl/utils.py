@@ -48,15 +48,6 @@ def unify_text(text: str) -> str:
     return merge_spaces(text).strip()
 
 
-def _find_ners(text: str) -> List[Span]:
-    """Нахождение именованных сущностей."""
-    doc = Doc(text)
-    doc.segment(segmenter)
-    doc.tag_ner(ner_tagger)
-    ners: List[Span] = doc.ner.spans
-    return ners
-
-
 def _fix_quotes(text: str) -> str:
     """Исправление дублирующихся ординарных кавычек "''" -> "'"."""
     return re.sub(r"\'{2,}", "'", text)
@@ -83,6 +74,26 @@ def delete_quotes_around_orgs(text: str) -> str:
     return re.sub(r"\'?org\'?", "org", text)
 
 
+def fix_bug_5(func: Callable[[str], str]) -> Callable[[str], str]:
+    """
+    Natasha не всегда правильно распознает названия организаций.
+
+    Например,
+    replace_ners("Сегодня в КХЛе пройдет матч") -> "Сегодня в loc пройдет матч".
+    Данный декоратор - попытка исправить данное поведение,
+    путем оборачивания заданных названий команд/организаций в кавычки
+    перед тем как распознавать ner'ы, а потом удаление кавычек вокруг org.
+    """
+
+    def wrapper(text: str) -> str:
+        """Функция wrapper."""
+        text = surround_concrete_orgs_with_quotes(text)
+        text = func(text)
+        return delete_quotes_around_orgs(text)
+
+    return wrapper
+
+
 def fix_bug_14(func: Callable[[str], str]) -> Callable[[str], str]:
     """
     Почему-то natasha ошибается на коротких названиях новостей.
@@ -103,7 +114,17 @@ def fix_bug_14(func: Callable[[str], str]) -> Callable[[str], str]:
     return wrapper
 
 
+def _find_ners(text: str) -> List[Span]:
+    """Нахождение именованных сущностей."""
+    doc = Doc(text)
+    doc.segment(segmenter)
+    doc.tag_ner(ner_tagger)
+    ners: List[Span] = doc.ner.spans
+    return ners
+
+
 @fix_bug_14
+@fix_bug_5
 def replace_ners(text: str) -> str:
     """
     Заменяет именованные сущности на их тип.
@@ -112,14 +133,13 @@ def replace_ners(text: str) -> str:
     'Магнитогорск' -> 'loc'
     'Ак Барс'      -> 'org'
     """
-    text = surround_concrete_orgs_with_quotes(text)
     ners_spans = _find_ners(text)
     for ner_span in reversed(ners_spans):
         text = text[: ner_span.start] + ner_span.type.lower() + text[ner_span.stop :]
     text = replace_concrete_orgs(text)
     text = handwritten_replace_orgs(text)
     text = handwritten_replace_per(text)
-    return delete_quotes_around_orgs(text)
+    return text
 
 
 def _find_dates(text: str) -> List[NatashaMatch]:
