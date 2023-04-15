@@ -71,7 +71,7 @@ class TestMetadata:
         ),
         (
             "Артем Лукоянов и Дмитрий Воронков забили по голу",
-            ["per", "и", "per", "забить", "по", "гол"],
+            ["pers", "забить", "по", "гол"],
         ),
         ("Гол!!!", ["гол", "."]),
         ("Иван Петров12 сентября сыграет", ["per", "date", "сыграть"]),
@@ -554,9 +554,7 @@ class TestMetadata:
                 "на",
                 "стартовый",
                 "матч",
-                "org",
-                "с",
-                "org",
+                "orgs",
                 "на",
                 "date",
                 "раскупить",
@@ -853,7 +851,6 @@ class TestMetadata:
                 "в",
                 "чемпионат",
                 "loc",
-                "и",
                 "org",
                 ".",
             ],
@@ -1144,7 +1141,7 @@ class TestUsagesFromReadme:
     )
     expected_simplified_text = (
         "date в loc в матче финала против org per забил свой гол за карьеру. "
-        "org org Голы забили: per per и per."
+        "org org Голы забили: per per per."
     )
     expected_lemmas = [
         "date",
