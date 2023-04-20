@@ -31,6 +31,7 @@ from khl.utils import (
     fix_dots,
     fix_english_dash_russian_words,
     fix_latin_c_in_russian_words,
+    fix_ner_with_and_ner,
     fix_org_loc,
     fix_question_dot,
     fix_question_marks,
@@ -254,6 +255,24 @@ def test_delete_numeric_data(source_text, expected_text):
 )
 def test_replace_dash_between_ners(source_text, expected_text):
     assert replace_dash_between_ners(source_text) == expected_text
+
+
+@pytest.mark.parametrize(
+    "source_text,expected_text",
+    [
+        ("", ""),
+        ("Текст с текстом", "Текст с текстом"),
+        ("Слово и слово", "Слово и слово"),
+        ("per  org loc", "per  org loc"),
+        ("per или per", "per или per"),
+        ("per с per", "per per"),
+        ("org и org", "org org"),
+        ("loc С per и date", "loc per date"),
+        ("per с  org и loc  со  date", "per org loc date"),
+    ],
+)
+def test_fix_ner_with_and_ner(source_text, expected_text):
+    assert fix_ner_with_and_ner(source_text) == expected_text
 
 
 @pytest.mark.parametrize(
@@ -1387,7 +1406,7 @@ def test_delete_quotes_around_orgs(source_text, expected_text):
         ),
         (
             "Артем Лукоянов и Дмитрий Воронков забили по голу",
-            "per и per забили по голу",
+            "per per забили по голу",
             True,
             False,
             False,
@@ -1395,7 +1414,7 @@ def test_delete_quotes_around_orgs(source_text, expected_text):
         (
             "21 января Шипачев и Зарипов в Москве забили много голов 'Спартаку', "
             "а Сергей Широков получил 5+20 за грубость",
-            "date per и per в loc забили много голов org "
+            "date per per в loc забили много голов org "
             "а per получил pen за грубость",
             True,
             True,
@@ -1526,7 +1545,7 @@ def test_simplify_text(
         (
             "21 января Шипачев и Зарипов в Москве забили много голов 'Спартаку', "
             "а Сергей Широков получил 5+20 за грубость",
-            "date per и per в loc забили много голов org а per получил pen за грубость",
+            "date per per в loc забили много голов org а per получил pen за грубость",
         ),
         pytest.param(
             "PRO Тигриц",
@@ -1596,6 +1615,27 @@ def test_simplify_text(
             "per - об игре: старались играть системно",
             marks=pytest.mark.bug_21,
         ),
+        pytest.param(
+            "Матч 'Спартака' с 'Локомотивом'",
+            "Матч org org",
+            marks=pytest.mark.bug_26,
+        ),
+        ("'Спартак' и 'Локомотив' вышли в финал", "org org вышли в финал"),
+        ("Победит 'Спартак' или 'Локомотив'", "Победит org или org"),
+        ("Артем Лукоянов и Данис Зарипов сыграют", "per per сыграют"),
+        ("Артем Лукоянов с Данисом Зариповым сыграют", "per per сыграют"),
+        (
+            "Артем Лукоянов с Данисом Зариповым с Алексеем Морозовом сыграют",
+            "per per per сыграют",
+        ),
+        ("Сыграет Артем Лукоянов или Данис Зарипов", "Сыграет per или per"),
+        ("Дальше Казань и Москва", "Дальше loc loc"),
+        ("Дальше Казань с Москвой", "Дальше loc loc"),
+        ("Дальше Казань или Москва", "Дальше loc или loc"),
+        ("Кирилл Петров со 'Спартаком' не сыграет", "per org не сыграет"),
+        ("Минск и Демков пришли к соглашению", "loc per пришли к соглашению"),
+        ("Матчи состоятся 11 марта и 2 апреля", "Матчи состоятся date date"),
+        ("'Локомотив' или Москва?", "org или loc?"),
     ],
 )
 def test_simplify_text_with_default_params(source_text, expected_text):
