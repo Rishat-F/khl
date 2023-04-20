@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "khl"
-version = "1.0.5"
+version = "1.0.6"
 description = "Preparing russian hockey news for machine learning"
 readme = "README.md"
 license = "MIT"
