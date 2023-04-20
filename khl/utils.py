@@ -224,6 +224,19 @@ def replace_dash_between_ners(text: str) -> str:
     return result
 
 
+def _delete_with_and(match_object: re.Match) -> str:  # type: ignore
+    """Удаление предлога 'с' и союза 'и'."""
+    text: str = match_object.group(0)
+    pattern = r"\s+(?:с|со|и)\s+"
+    return re.sub(pattern, " ", text, flags=re.IGNORECASE)
+
+
+def fix_ner_with_and_ner(text: str) -> str:
+    """Удаление предлога 'с' и союза 'и', которые располагатся между ner'ами."""
+    pattern = r"(?:per|org|loc|date)(?:\s+(?i:с|со|и)\s+(?:per|org|loc|date))+"
+    return re.sub(pattern, _delete_with_and, text)
+
+
 def merge_spaces(text: str) -> str:
     """'Схлопывает' все соседние пробельные символы в один пробел."""
     return re.sub(r"\s{2,}", " ", text)
@@ -806,6 +819,7 @@ def simplify_text(
     text = merge_spaces(text)
     text = merge_dashes(text)
     text = replace_dash_between_ners(text)
+    text = fix_ner_with_and_ner(text)
     text = delete_beginning_ending_dashes_in_words(text)
     text = fix_dots(text)
     text = fix_question_marks(text)

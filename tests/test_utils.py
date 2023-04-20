@@ -31,6 +31,7 @@ from khl.utils import (
     fix_dots,
     fix_english_dash_russian_words,
     fix_latin_c_in_russian_words,
+    fix_ner_with_and_ner,
     fix_org_loc,
     fix_question_dot,
     fix_question_marks,
@@ -254,6 +255,24 @@ def test_delete_numeric_data(source_text, expected_text):
 )
 def test_replace_dash_between_ners(source_text, expected_text):
     assert replace_dash_between_ners(source_text) == expected_text
+
+
+@pytest.mark.parametrize(
+    "source_text,expected_text",
+    [
+        ("", ""),
+        ("Текст с текстом", "Текст с текстом"),
+        ("Слово и слово", "Слово и слово"),
+        ("per  org loc", "per  org loc"),
+        ("per или per", "per или per"),
+        ("per с per", "per per"),
+        ("org и org", "org org"),
+        ("loc С per и date", "loc per date"),
+        ("per с  org и loc  со  date", "per org loc date"),
+    ],
+)
+def test_fix_ner_with_and_ner(source_text, expected_text):
+    assert fix_ner_with_and_ner(source_text) == expected_text
 
 
 @pytest.mark.parametrize(
