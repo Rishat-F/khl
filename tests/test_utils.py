@@ -33,6 +33,7 @@ from khl.utils import (
     fix_latin_c_in_russian_words,
     fix_ner_with_and_ner,
     fix_org_loc,
+    fix_press_conference,
     fix_question_dot,
     fix_question_marks,
     fix_surname_dash_surname_dash_surname,
@@ -426,6 +427,26 @@ def test_lowercase_sdk(source_text, expected_text):
 )
 def test_replace_sdk(source_text, expected_text):
     assert replace_sdk(source_text) == expected_text
+
+
+@pytest.mark.parametrize(
+    "source_text,expected_text",
+    [
+        ("", ""),
+        ("Текст", "Текст"),
+        ("Пресс-конференция", "Пресс-конференция"),
+        ("ПРЕСС-КОНФЕРЕНЦИЯ", "ПРЕСС-КОНФЕРЕНЦИЯ"),
+        ("Итоги пресс-конференции", "Итоги пресс-конференции"),
+        ("Пресс конференция", "Пресс-конференция"),
+        ("ПРЕСС КОНФЕРЕНЦИЯ", "ПРЕСС-КОНФЕРЕНЦИЯ"),
+        ("Итоги пресс конференции", "Итоги пресс-конференции"),
+        ("прессконференция", "пресс-конференция"),
+        ("пресс  конференция", "пресс-конференция"),
+        ("пресс - конференция", "пресс-конференция"),
+    ],
+)
+def test_fix_press_conference(source_text, expected_text):
+    assert fix_press_conference(source_text) == expected_text
 
 
 @pytest.mark.parametrize(
@@ -1636,6 +1657,11 @@ def test_simplify_text(
         ("Минск и Демков пришли к соглашению", "loc per пришли к соглашению"),
         ("Матчи состоятся 11 марта и 2 апреля", "Матчи состоятся date date"),
         ("'Локомотив' или Москва?", "org или loc?"),
+        pytest.param(
+            "Пресс конференция тренеров",
+            "Пресс-конференция тренеров",
+            marks=pytest.mark.bug_28,
+        ),
     ],
 )
 def test_simplify_text_with_default_params(source_text, expected_text):
