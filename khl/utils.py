@@ -204,17 +204,10 @@ def replace_sdk(text: str) -> str:
     return result
 
 
-def _fix_press_conference(match_object: re.Match) -> str:  # type: ignore
-    """'Пресс конференция' -> 'Пресс-конференция'."""
-    string: str = match_object.group(0)
-    pattern = r"(?<=пресс)[\s-]*"
-    return re.sub(pattern, "-", string, flags=re.IGNORECASE)
-
-
 def fix_press_conference(text: str) -> str:
     """'Пресс конференция' -> 'Пресс-конференция'."""
-    pattern = r"пресс[\s-]*конференц"
-    result = re.sub(pattern, _fix_press_conference, text, flags=re.IGNORECASE)
+    pattern = r"(?<=пресс)[\s-]*(?=конференц)"
+    result = re.sub(pattern, "-", text, flags=re.IGNORECASE)
     return result
 
 
