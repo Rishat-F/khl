@@ -135,7 +135,7 @@ simplified_text = utils.simplify_text(
     replace_dates_=True,
     replace_penalties_=True,
 )
-# 'date в loc в матче финала против org per забил свой гол за карьеру. org org Голы забили: per per и per.'
+# 'date в loc в матче финала против org per забил свой гол за карьеру. org org Голы забили: per per per.'
 ```
 
 #### 6. Lemmatize
