@@ -1636,6 +1636,11 @@ def test_simplify_text(
         ("Минск и Демков пришли к соглашению", "loc per пришли к соглашению"),
         ("Матчи состоятся 11 марта и 2 апреля", "Матчи состоятся date date"),
         ("'Локомотив' или Москва?", "org или loc?"),
+        pytest.param(
+            "Пресс конференция тренеров",
+            "Пресс-конференция тренеров",
+            marks=pytest.mark.bug_28,
+        ),
     ],
 )
 def test_simplify_text_with_default_params(source_text, expected_text):
