@@ -22,7 +22,7 @@ To get started right away with basic usage:
 ```python
 from khl import text_to_codes
 
-lemmas_coder = {
+coder = {
     '': 0,     # placeholder
     '???': 1,  # unknown
     '.': 2,
@@ -52,12 +52,12 @@ text = """
 
 codes = text_to_codes(
     text=text,
-    lemmas_coder=lemmas_coder,
+    coder=coder,
     stop_words_=["за", "и", "свой"],  # stop words to drop
     replace_ners_=True,               # replace named entities ("Иван Иванов" -> "per", "Спартак" -> "org", "Москва" -> "loc")
     replace_dates_=True,              # replace dates ("1 апреля 2023 года" -> "date")
     replace_penalties_=True,          # replace penalties ("5+20" -> "pen")
-    exclude_unknown=True,             # drop lemma that not presented in lemmas_coder
+    exclude_unknown=True,             # drop lemma that not presented in coder
     max_len=20,                       # get sequence of codes of length 20
 )
 # codes = [0, 0, 0, 14, 4, 13, 4, 7, 15, 12, 11, 9, 10, 2, 18, 10, 9, 6, 17, 2]
@@ -65,11 +65,11 @@ codes = text_to_codes(
 
 ```text_to_codes``` is a very high level function. What's happens under hood see in [Lower level usage](#lower-level-usage).
 
-## What is `lemmas_coder`?
-`lemmas_coder` is just a dictionary where each lemma is represented with unique integer code.
+## What is `coder`?
+`coder` is just a dictionary where each lemma is represented with unique integer code.
 Note that first two elements are reserved for *placeholder* and *unknown* elements.
 
-It is possible to get `lemmas_coder` from frequency dictionary file (see in [Get lemmas coder](#2-get-lemmas-coder)).
+It is possible to get `coder` from frequency dictionary file (see in [Get lemmas coder](#2-get-lemmas-coder)).
 Frequency dictionary file is a **json**-file with dictionary where key is lemma and value is how many times this lemma occurred in your whole dataset.
 Preferably it should be sorted in descending order of values.  
 `example_frequency_dictionary.json`:
@@ -110,7 +110,7 @@ from khl import preprocess
 
 #### 2. Get lemmas coder<a id="2-get-lemmas-coder"></a>
 ```python
-lemmas_coder = preprocess.get_lemmas_coder("example_frequency_dictionary.json")
+coder = preprocess.get_coder("example_frequency_dictionary.json")
 ```
 
 #### 3. Define text
@@ -123,13 +123,13 @@ text = """
 
 #### 4. Unify
 ```python
-unified_text = utils.unify_text(text)
+unified_text = utils.unify(text)
 # "1 апреля 2023 года в Москве в матче 1/8 финала против 'Спартака' Иван Иванов забил свой 100-й гол за карьеру. 'Динамо Мск' - 'Спартак' 2:1 ОТ (1:0 0:1 0:0 1:0) Голы забили: Иванов, Петров и Сидоров."
 ```
 
 #### 5. Simplify
 ```python
-simplified_text = utils.simplify_text(
+simplified_text = utils.simplify(
     text=unified_text,
     replace_ners_=True,
     replace_dates_=True,
@@ -148,7 +148,7 @@ lemmas = preprocess.lemmatize(text=simplified_text, stop_words_=stop_words)
 ```python
 codes = preprocess.lemmas_to_codes(
     lemmas=lemmas,
-    lemmas_coder=lemmas_coder,
+    coder=coder,
     exclude_unknown=True,
     max_len=20,
 )
@@ -158,7 +158,7 @@ codes = preprocess.lemmas_to_codes(
 #### 8. Transform to lemmas back (just to look which lemmas are presented in codes sequence)
 ```python
 print(
-    preprocess.codes_to_lemmas(codes=codes, lemmas_coder=lemmas_coder)
+    preprocess.codes_to_lemmas(codes=codes, coder=coder)
 )
 # ['', '', '', 'date', 'в', 'loc', 'в', 'матч', 'против', 'org', 'per', 'забить', 'гол', '.', 'orgs', 'гол', 'забить', ':', 'pers', '.']
 ```

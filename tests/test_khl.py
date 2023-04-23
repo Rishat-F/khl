@@ -984,7 +984,7 @@ class TestMetadata:
     ],
 )
 def test_simplify_plus_lemmatize(source_text, expected_lemmas):
-    simplified_text = khl.utils.simplify_text(
+    simplified_text = khl.utils.simplify(
         source_text,
         replace_ners_=True,
         replace_dates_=True,
@@ -1054,13 +1054,11 @@ def test_e2e(
         1 апреля 2023 года в матче ⅛ финала против „Спартака” Иван Иванов забил свой 100—й гол за карьеру.
         «Динамо Мск» - «Спартак» 2:1 ОТ (1:0 0:1 0:0 1:0) Голы забили: Иванов, Петров, Сидоров.
     """
-    lemmas_coder = khl.preprocess.get_lemmas_coder(
-        tests_dir / test_frequency_dictionary_file
-    )
+    coder = khl.preprocess.get_coder(tests_dir / test_frequency_dictionary_file)
     assert (
         khl.text_to_codes(
             text,
-            lemmas_coder,
+            coder,
             stop_words_,
             replace_ners_,
             replace_dates_,
@@ -1079,14 +1077,12 @@ def test_e2e_with_default_params():
         В матче судьи выписали два удаления '5+20'.
     """
     expected_codes = [14, 4, 7, 15, 12, 11, 9, 10, 2, 18, 10, 9, 6, 17, 2, 4, 7, 20, 2]
-    lemmas_coder = khl.preprocess.get_lemmas_coder(
-        tests_dir / test_frequency_dictionary_file
-    )
-    assert khl.text_to_codes(text, lemmas_coder) == expected_codes
+    coder = khl.preprocess.get_coder(tests_dir / test_frequency_dictionary_file)
+    assert khl.text_to_codes(text, coder) == expected_codes
 
 
 class TestUsagesFromReadme:
-    lemmas_coder = {
+    coder = {
         "": 0,  # placeholder
         "???": 1,  # unknown
         ".": 2,
@@ -1190,22 +1186,20 @@ class TestUsagesFromReadme:
     def test_basic_usage_from_readme(self):
         codes = text_to_codes(
             text=self.text,
-            lemmas_coder=self.lemmas_coder,
+            coder=self.coder,
             stop_words_=["за", "и", "свой"],  # stop words to drop
             replace_ners_=True,  # replace named entities ("Иван Иванов" -> "per", "Спартак" -> "org", "Москва" -> "loc")
             replace_dates_=True,  # replace dates ("1 апреля 2023 года" -> "date")
             replace_penalties_=True,  # replace penalties ("5+20" -> "pen")
-            exclude_unknown=True,  # drop lemma that not presented in lemmas_coder
+            exclude_unknown=True,  # drop lemma that not presented in coder
             max_len=20,  # get sequence of codes of length 15
         )
         assert codes == self.expected_codes
 
     def test_lower_level_usage(self):
-        lemmas_coder = khl.preprocess.get_lemmas_coder(
-            tests_dir / test_frequency_dictionary_file
-        )
-        unified_text = khl.utils.unify_text(self.text)
-        simplified_text = khl.utils.simplify_text(
+        coder = khl.preprocess.get_coder(tests_dir / test_frequency_dictionary_file)
+        unified_text = khl.utils.unify(self.text)
+        simplified_text = khl.utils.simplify(
             text=unified_text,
             replace_ners_=True,
             replace_dates_=True,
@@ -1216,13 +1210,11 @@ class TestUsagesFromReadme:
         )
         codes = khl.preprocess.lemmas_to_codes(
             lemmas=lemmas,
-            lemmas_coder=lemmas_coder,
+            coder=coder,
             exclude_unknown=True,
             max_len=20,
         )
-        lemmas_20 = khl.preprocess.codes_to_lemmas(
-            codes=codes, lemmas_coder=lemmas_coder
-        )
+        lemmas_20 = khl.preprocess.codes_to_lemmas(codes=codes, coder=coder)
         assert unified_text == self.expected_unified_text
         assert simplified_text == self.expected_simplified_text
         assert lemmas == self.expected_lemmas

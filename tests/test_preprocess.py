@@ -18,7 +18,7 @@ from khl.preprocess import (
     _merge_pers,
     codes_to_lemmas,
     fix_lemma,
-    get_lemmas_coder,
+    get_coder,
     lemmas_to_codes,
     lemmatize,
 )
@@ -283,8 +283,8 @@ def test_merge_codes(source_codes, expected_codes):
         str(tests_dir) + "/" + test_frequency_dictionary_file,
     ],
 )
-def test_get_lemmas_coder(file_path):
-    assert get_lemmas_coder(file_path) == {
+def test_get_coder(file_path):
+    assert get_coder(file_path) == {
         PLACEHOLDER: 0,
         UNKNOWN: 1,
         ".": 2,
@@ -310,7 +310,7 @@ def test_get_lemmas_coder(file_path):
 
 
 class TestLemmasCodes:
-    lemmas_coder = {
+    coder = {
         PLACEHOLDER: 0,
         UNKNOWN: 1,
         ".": 2,
@@ -334,13 +334,13 @@ class TestLemmasCodes:
     )
     def test_lemmas_to_codes(self, exclude_unknown, max_len, expected_codes):
         assert (
-            lemmas_to_codes(self.lemmas, self.lemmas_coder, exclude_unknown, max_len)
+            lemmas_to_codes(self.lemmas, self.coder, exclude_unknown, max_len)
             == expected_codes
         )
 
     def test_lemmas_to_codes_with_default_params(self):
         expected_codes = [6, 3, 4, 5, 2]
-        assert lemmas_to_codes(self.lemmas, self.lemmas_coder) == expected_codes
+        assert lemmas_to_codes(self.lemmas, self.coder) == expected_codes
 
     @pytest.mark.parametrize(
         "codes,expected_lemmas",
@@ -354,4 +354,4 @@ class TestLemmasCodes:
         ],
     )
     def test_codes_to_lemmas(self, codes, expected_lemmas):
-        assert codes_to_lemmas(codes, self.lemmas_coder) == expected_lemmas
+        assert codes_to_lemmas(codes, self.coder) == expected_lemmas

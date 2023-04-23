@@ -30,7 +30,7 @@ emb = NewsEmbedding()  # pragma: no mutate
 ner_tagger = NewsNERTagger(emb)
 
 
-def unify_text(text: str) -> str:
+def unify(text: str) -> str:
     """Приведение текстов новостей к единому виду."""
     for symbol in ['"', "`", "«", "»", "„", "“", "”"]:
         text = text.replace(symbol, "'")
@@ -714,7 +714,7 @@ def delete_ending_colon_dash(text: str) -> str:
     return text.rstrip(" -:")
 
 
-def simplify_text(
+def simplify(
     text: str,
     replace_ners_: bool = True,
     replace_dates_: bool = True,
@@ -727,7 +727,7 @@ def simplify_text(
     особой смысловой нагрузки для машинного обучения.
 
     Пример использования:
-      simplify_text(
+      simplify(
         text="1 января 2020 года Иван Иванов в Москве забил гол в ворота Спартака, а также заработал 5+10 за грубость",  # noqa
         replace_ners_=True,
         replace_dates_=True,

@@ -160,7 +160,7 @@ def _merge_codes(codes: List[Code]) -> List[Code]:
 
 def lemmas_to_codes(
     lemmas: List[Lemma],
-    lemmas_coder: Dict[Lemma, Code],
+    coder: Dict[Lemma, Code],
     exclude_unknown: bool = True,
     max_len: Optional[int] = None,
 ) -> List[Code]:
@@ -175,9 +175,9 @@ def lemmas_to_codes(
     codes = []
     for lemma in lemmas:
         if not exclude_unknown:
-            codes.append(lemmas_coder.get(lemma, lemmas_coder[UNKNOWN]))
-        elif lemma in lemmas_coder:
-            codes.append(lemmas_coder[lemma])
+            codes.append(coder.get(lemma, coder[UNKNOWN]))
+        elif lemma in coder:
+            codes.append(coder[lemma])
         else:
             continue
     codes = _merge_codes(codes)
@@ -186,30 +186,30 @@ def lemmas_to_codes(
     elif len(codes) >= max_len:  # pragma: no mutate
         return codes[:max_len]
     else:
-        return _fill_placeholders(codes, lemmas_coder, max_len)
+        return _fill_placeholders(codes, coder, max_len)
 
 
 def _fill_placeholders(
     codes: List[Code],
-    lemmas_coder: Dict[Lemma, Code],
+    coder: Dict[Lemma, Code],
     max_len: int,
 ) -> List[Code]:
     """Заполняет список кодов символами-заполнителями."""
-    filled_codes = [lemmas_coder[PLACEHOLDER]] * (max_len - len(codes))
+    filled_codes = [coder[PLACEHOLDER]] * (max_len - len(codes))
     filled_codes.extend(codes)
     return filled_codes
 
 
-def codes_to_lemmas(codes: List[Code], lemmas_coder: Dict[Lemma, Code]) -> List[Lemma]:
+def codes_to_lemmas(codes: List[Code], coder: Dict[Lemma, Code]) -> List[Lemma]:
     """Преобразует последовательность кодов в последовательность их лемм."""
-    reversed_lemmas_coder = {value: key for key, value in lemmas_coder.items()}
+    reversed_coder = {value: key for key, value in coder.items()}
     lemmas = []
     for code in codes:
-        lemmas.append(reversed_lemmas_coder[code])
+        lemmas.append(reversed_coder[code])
     return lemmas
 
 
-def get_lemmas_coder(frequency_dictionary_file: Union[Path, str]) -> Dict[Lemma, Code]:
+def get_coder(frequency_dictionary_file: Union[Path, str]) -> Dict[Lemma, Code]:
     """
     Получение словаря кодового представления лемм из частотного словаря лемм.
 
@@ -225,9 +225,9 @@ def get_lemmas_coder(frequency_dictionary_file: Union[Path, str]) -> Dict[Lemma,
       0 - символ-заполнитель
       1 - неизвестное слово
     """
-    lemmas_coder = {PLACEHOLDER: 0, UNKNOWN: 1}
+    coder = {PLACEHOLDER: 0, UNKNOWN: 1}
     with open(frequency_dictionary_file, "r", encoding="utf-8") as fr:
         freq_dict = json.load(fr)
-    for freq, word in enumerate(freq_dict, len(lemmas_coder)):
-        lemmas_coder[word] = freq
-    return lemmas_coder
+    for freq, word in enumerate(freq_dict, len(coder)):
+        coder[word] = freq
+    return coder
