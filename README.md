@@ -53,14 +53,14 @@ text = """
 codes = text_to_codes(
     text=text,
     lemmas_coder=lemmas_coder,
-    stop_words_=["в", "за", "и", "свой"],  # stop words to drop
-    replace_ners_=True,                    # replace named entities ("Иван Иванов" -> "per", "Спартак" -> "org", "Москва" -> "loc")
-    replace_dates_=True,                   # replace dates ("1 апреля 2023 года" -> "date")
-    replace_penalties_=True,               # replace penalties ("5+20" -> "pen")
-    exclude_unknown=True,                  # drop lemma that not presented in lemmas_coder
-    max_len=20,                            # get sequence of codes of length 20
+    stop_words_=["за", "и", "свой"],  # stop words to drop
+    replace_ners_=True,               # replace named entities ("Иван Иванов" -> "per", "Спартак" -> "org", "Москва" -> "loc")
+    replace_dates_=True,              # replace dates ("1 апреля 2023 года" -> "date")
+    replace_penalties_=True,          # replace penalties ("5+20" -> "pen")
+    exclude_unknown=True,             # drop lemma that not presented in lemmas_coder
+    max_len=20,                       # get sequence of codes of length 20
 )
-# codes = [0, 0, 0, 0, 0, 14, 13, 7, 15, 12, 11, 9, 10, 2, 18, 10, 9, 6, 17, 2]
+# codes = [0, 0, 0, 14, 4, 13, 4, 7, 15, 12, 11, 9, 10, 2, 18, 10, 9, 6, 17, 2]
 ```
 
 ```text_to_codes``` is a very high level function. What's happens under hood see in [Lower level usage](#lower-level-usage).
@@ -141,7 +141,7 @@ simplified_text = utils.simplify_text(
 #### 6. Lemmatize
 ```python
 lemmas = preprocess.lemmatize(text=simplified_text, stop_words_=stop_words)
-# ['date', 'loc', 'матч', 'финал', 'против', 'org', 'per', 'забить', 'гол', 'карьера', '.', 'orgs', 'гол', 'забить', ':', 'pers', '.']
+# ['date', 'в', 'loc', 'в', 'матч', 'финал', 'против', 'org', 'per', 'забить', 'гол', 'карьера', '.', 'orgs', 'гол', 'забить', ':', 'pers', '.']
 ```
 
 #### 7. Transform to codes
@@ -152,7 +152,7 @@ codes = preprocess.lemmas_to_codes(
     exclude_unknown=True,
     max_len=20,
 )
-# [0, 0, 0, 0, 0, 14, 13, 7, 15, 12, 11, 9, 10, 2, 18, 10, 9, 6, 17, 2]
+# [0, 0, 0, 14, 4, 13, 4, 7, 15, 12, 11, 9, 10, 2, 18, 10, 9, 6, 17, 2]
 ```
 
 #### 8. Transform to lemmas back (just to look which lemmas are presented in codes sequence)
@@ -160,5 +160,5 @@ codes = preprocess.lemmas_to_codes(
 print(
     preprocess.codes_to_lemmas(codes=codes, lemmas_coder=lemmas_coder)
 )
-# ['', '', '', '', '', 'date', 'loc', 'матч', 'против', 'org', 'per', 'забить', 'гол', '.', 'orgs', 'гол', 'забить', ':', 'pers', '.']
+# ['', '', '', 'date', 'в', 'loc', 'в', 'матч', 'против', 'org', 'per', 'забить', 'гол', '.', 'orgs', 'гол', 'забить', ':', 'pers', '.']
 ```

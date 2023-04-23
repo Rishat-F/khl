@@ -1018,7 +1018,7 @@ def test_simplify_plus_lemmatize(source_text, expected_lemmas):
             True,
             False,
             None,
-            [14, 7, 1, 15, 12, 11, 9, 10, 1, 2, 18, 10, 9, 6, 17, 2],
+            [14, 4, 7, 1, 15, 12, 11, 9, 10, 1, 2, 18, 10, 9, 6, 17, 2],
         ),
         (
             None,
@@ -1037,7 +1037,7 @@ def test_simplify_plus_lemmatize(source_text, expected_lemmas):
             False,
             True,
             15,
-            [0, 0, 0, 0, 14, 7, 15, 9, 10, 2, 5, 10, 9, 6, 2],
+            [0, 0, 0, 14, 4, 7, 15, 9, 10, 2, 5, 10, 9, 6, 2],
         ),
     ],
 )
@@ -1078,7 +1078,7 @@ def test_e2e_with_default_params():
         «Динамо Мск» - «Спартак» 2:1 ОТ (1:0 0:1 0:0 1:0) Голы забили: Иванов, Петров, Сидоров.
         В матче судьи выписали два удаления '5+20'.
     """
-    expected_codes = [14, 7, 15, 12, 11, 9, 10, 2, 18, 10, 9, 6, 17, 2, 7, 20, 2]
+    expected_codes = [14, 4, 7, 15, 12, 11, 9, 10, 2, 18, 10, 9, 6, 17, 2, 4, 7, 20, 2]
     lemmas_coder = khl.preprocess.get_lemmas_coder(
         tests_dir / test_frequency_dictionary_file
     )
@@ -1116,10 +1116,10 @@ class TestUsagesFromReadme:
         0,
         0,
         0,
-        0,
-        0,
         14,
+        4,
         13,
+        4,
         7,
         15,
         12,
@@ -1145,7 +1145,9 @@ class TestUsagesFromReadme:
     )
     expected_lemmas = [
         "date",
+        "в",
         "loc",
+        "в",
         "матч",
         "финал",
         "против",
@@ -1166,10 +1168,10 @@ class TestUsagesFromReadme:
         "",
         "",
         "",
-        "",
-        "",
         "date",
+        "в",
         "loc",
+        "в",
         "матч",
         "против",
         "org",
@@ -1189,7 +1191,7 @@ class TestUsagesFromReadme:
         codes = text_to_codes(
             text=self.text,
             lemmas_coder=self.lemmas_coder,
-            stop_words_=["в", "за", "и", "свой"],  # stop words to drop
+            stop_words_=["за", "и", "свой"],  # stop words to drop
             replace_ners_=True,  # replace named entities ("Иван Иванов" -> "per", "Спартак" -> "org", "Москва" -> "loc")
             replace_dates_=True,  # replace dates ("1 апреля 2023 года" -> "date")
             replace_penalties_=True,  # replace penalties ("5+20" -> "pen")

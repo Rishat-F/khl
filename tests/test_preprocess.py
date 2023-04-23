@@ -187,7 +187,7 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
         (
             "- Играете в футбол? - Иногда.",
             stop_words,
-            ["-", "играть", "футбол", "?", "-", "."],
+            ["-", "играть", "в", "футбол", "?", "-", "."],
         ),
         (
             "Сегодня Ансель Галимов забил несколько голов",
@@ -216,6 +216,7 @@ def test_merge_lemmas(source_lemmas, expected_lemmas):
             [
                 "date",
                 "pers",
+                "в",
                 "loc",
                 "забить",
                 "гол",
