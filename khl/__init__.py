@@ -10,7 +10,7 @@ from khl.stop_words import stop_words
 
 def text_to_codes(
     text: str,
-    lemmas_coder: Dict[preprocess.Lemma, preprocess.Code],
+    coder: Dict[preprocess.Lemma, preprocess.Code],
     stop_words_: Optional[List[preprocess.Lemma]] = stop_words,
     replace_ners_: bool = True,
     replace_dates_: bool = True,
@@ -23,7 +23,7 @@ def text_to_codes(
 
     args:
       text: текст новости
-      lemmas_coder: словарь, в котором каждая лемма однозначно
+      coder: словарь, в котором каждая лемма однозначно
         идентифицируется со своим целочисленным кодом
       stop_words_: стоп-слова для исключения
       replace_ners_: если True, то в тексте имена людей заменяются на
@@ -37,8 +37,8 @@ def text_to_codes(
         заменяются на код неизвестного слова
       max_len: длина последовательности на выходе
     """
-    text = utils.unify_text(text)
-    text = utils.simplify_text(text, replace_ners_, replace_dates_, replace_penalties_)
+    text = utils.unify(text)
+    text = utils.simplify(text, replace_ners_, replace_dates_, replace_penalties_)
     lemmas = preprocess.lemmatize(text, stop_words_)
-    codes = preprocess.lemmas_to_codes(lemmas, lemmas_coder, exclude_unknown, max_len)
+    codes = preprocess.lemmas_to_codes(lemmas, coder, exclude_unknown, max_len)
     return codes

@@ -56,10 +56,10 @@ from khl.utils import (
     replace_tak_kak,
     replace_to_est,
     replace_vs_with_dash,
-    simplify_text,
+    simplify,
     split_ners,
     surround_concrete_orgs_with_quotes,
-    unify_text,
+    unify,
 )
 
 
@@ -91,8 +91,8 @@ from khl.utils import (
         ),
     ],
 )
-def test_unify_text(source_text, expected_text):
-    assert unify_text(source_text) == expected_text
+def test_unify(source_text, expected_text):
+    assert unify(source_text) == expected_text
 
 
 @pytest.mark.parametrize(
@@ -1542,7 +1542,7 @@ def test_delete_quotes_around_orgs(source_text, expected_text):
         ),
     ],
 )
-def test_simplify_text(
+def test_simplify(
     source_text,
     expected_text,
     replace_ners_,
@@ -1550,7 +1550,7 @@ def test_simplify_text(
     replace_penalties_,
 ):
     assert (
-        simplify_text(
+        simplify(
             source_text,
             replace_ners_,
             replace_dates_,
@@ -1664,5 +1664,5 @@ def test_simplify_text(
         ),
     ],
 )
-def test_simplify_text_with_default_params(source_text, expected_text):
-    assert simplify_text(source_text) == expected_text
+def test_simplify_with_default_params(source_text, expected_text):
+    assert simplify(source_text) == expected_text
