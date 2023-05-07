@@ -256,9 +256,15 @@ def test_lemmatize(source_text, stop_words_, expected_lemmas):
     assert lemmatize(source_text, stop_words_) == expected_lemmas
 
 
-def test_lemmatize_with_default_params():
-    source_text = "per и per забили по голу"
-    expected_lemmas = ["pers", "забить", "гол"]
+@pytest.mark.parametrize(
+    "source_text,expected_lemmas",
+    [
+        ("per и per забили по голу", ["pers", "забить", "гол"]),
+        ("per - лет в org", ["per", "-", "год", "в", "org"]),
+        ("per - на года в org", ["per", "-", "на", "год", "в", "org"]),
+    ],
+)
+def test_lemmatize_with_default_params(source_text, expected_lemmas):
     assert lemmatize(source_text) == expected_lemmas
 
 
