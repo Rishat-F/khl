@@ -1327,8 +1327,8 @@ def test_fix_org_loc(source_text, expected_text):
             "Металлург Мг Metallurg Mg Нефтехимик Neftekhimik "
             "Салават Юлаев Salavat Ulaev Северсталь Severstal "
             "Сибирь Sibir СКА SKA Спартак Spartak Торпедо НН Torpedo NN "
-            "Трактор Traktor ХК Сочи HC Sochi ЦСКА CSKA",
-            " ".join(["org"] * 24 * 2),
+            "Трактор Traktor ХК Сочи HC Sochi ЦСКА CSKA Лада Lada",
+            " ".join(["org"] * 25 * 2),
         ),
         pytest.param(
             "'Автомобилист' отправился на выезд.",
